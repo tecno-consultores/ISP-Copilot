@@ -1,0 +1,39 @@
+### --- Sistemas y Editores ---
+.idea/
+.vscode/
+**.DS_Store
+Thumbs.db
+
+### --- Archivos de Configuración Sensibles ---
+# Ignorar todos los archivos de entorno
+.env
+*.env
+# Ignorar certificados y llaves
+*.cert
+*.key
+*.pem
+*.crt
+.*CERT_FILE
+.*KEY_FILE
+.*CA_FILE
+
+### --- Persistencia de Datos (Locales) ---
+# Ignorar las carpetas donde se guardan los datos de los contenedores
+# Esto evita que subas tu base de datos local al repo
+postgres/
+redis/
+mysql/
+n8n_data/
+**/data/
+
+### --- Docker & Logs ---
+*.log
+docker-compose.override.yml
+Dockerfiles/*/rhel/secrets/*
+
+### --- Archivos Temporales de Desarrollo ---
+sources/*
+node_modules/
+dist/
+*.tmp
+*.bak
