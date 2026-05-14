@@ -1,0 +1,587 @@
+# Made by: Tecno Consultores 2023
+x-ollama-base: &ollama-base
+    image: ollama/ollama:latest
+    hostname: ${ohostname}
+    container_name: ${ohostname}
+    privileged: true
+    pull_policy: ${pull_policy}
+    restart: ${restart}
+    stdin_open: true
+    tty: true
+    ports:
+      - ${OPORT}:11434
+    ulimits:
+      memlock: -1
+    volumes:
+      - ollama:/root/.ollama
+    healthcheck:
+      test: ['CMD-SHELL', 'ollama --version && ollama ps || exit 1']
+      start_period: 5s
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+x-openwebui-base: &openwebui-base
+    image: ghcr.io/open-webui/open-webui:latest
+    hostname: ${openhostname}
+    container_name: ${openhostname}
+    pull_policy: ${pull_policy}
+    restart: ${restart}
+    environment:
+      - ENV=prod
+      - DOCKER=true
+      - WEBUI_SECRET_KEY=${WEBUI_SECRET_KEY}
+      - WEBUI_URL=${WEBUI_URL}
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DATABASE_HOST}:${POSTGRESDB_PORT}/oui
+      - CUSTOM_NAME=${CUSTOM_NAME}
+      - WEBUI_NAME=${CUSTOM_NAME}
+      - ENABLE_SIGNUP=true
+      - ENABLE_LOGIN_FORM=true
+      - ENABLE_REALTIME_CHAT_SAVE=false
+      - ENABLE_ADMIN_EXPORT=false
+      - ENABLE_ADMIN_CHAT_ACCESS=true
+      - MODELS_CACHE_TTL=300
+      - ENABLE_CHANNELS=false
+      - ENABLE_FOLDERS=false
+      - ENABLE_NOTES=false
+      - ENABLE_MEMORIES=false
+      - SHOW_ADMIN_DETAILS=true
+      - DEFAULT_USER_ROLE=pending
+      - DEFAULT_LOCALE=es
+      - AIOHTTP_CLIENT_TIMEOUT=1000
+      - ENABLE_OLLAMA_API=true
+      - OLLAMA_BASE_URL=${UOLLAMA}
+      - ENABLE_OPENAI_API=${ENABLE_OPENAI_API}
+      - OPENAI_API_BASE_URL=${OPENAI_API_BASE_URL}
+      - ENABLE_AUTOCOMPLETE_GENERATION=false
+      - AUTOCOMPLETE_GENERATION_INPUT_MAX_LENGTH=-1
+      - ENABLE_EVALUATION_ARENA_MODELS=false
+      - ENABLE_MESSAGE_RATING=true
+      - ENABLE_COMMUNITY_SHARING=false
+      - ENABLE_TAGS_GENERATION=true
+      - ENABLE_FORWARD_USER_INFO_HEADERS=true #set to true for openai-bridge
+      - WEBUI_SESSION_COOKIE_SAME_SITE=strict
+      - WEBUI_SESSION_COOKIE_SECURE=true
+      - WEBUI_AUTH_COOKIE_SAME_SITE=strict
+      - WEBUI_AUTH_COOKIE_SECURE=true
+      - WEBUI_AUTH=true
+      - OFFLINE_MODE=true
+      - HF_HUB_OFFLINE=1
+      - RAG_EMBEDDING_MODEL_AUTO_UPDATE=false
+      - RAG_RERANKING_MODEL_AUTO_UPDATE=false
+      - WHISPER_MODEL_AUTO_UPDATE=false
+      - RESET_CONFIG_ON_START=false
+      - SAFE_MODE=false
+      - CORS_ALLOW_ORIGIN=*
+      - ENABLE_GOOGLE_DRIVE_INTEGRATION=false
+      - GOOGLE_DRIVE_CLIENT_ID=
+      - GOOGLE_DRIVE_API_KEY=
+      - ENABLE_IMAGE_GENERATION=false
+      - IMAGE_GENERATION_ENGINE=comfyui
+      - IMAGE_GENERATION_MODEL=
+      - IMAGE_SIZE=512x512
+      - IMAGE_STEPS=50
+      - ENABLE_WEBSOCKET_SUPPORT=true
+      - WEBSOCKET_MANAGER=redis
+      - WEBSOCKET_REDIS_URL=redis://${rhostname}:${REDIS_PORT}/2
+      - REDIS_URL=redis://${rhostname}:${REDIS_PORT}/2
+      - REDIS_KEY_PREFIX=${openhostname}
+      - ENABLE_SEARCH_QUERY_GENERATION=false
+      - ENABLE_CODE_EXECUTION=false
+      - ENABLE_CODE_INTERPRETER=false
+      - ENABLE_WEB_SEARCH=false
+#      - http_proxy=${http_proxy}
+#      - https_proxy=${https_proxy}
+    ports:
+      - ${PORT}:8080
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    volumes:
+      - openwebui:/app/backend/data
+#    extra_hosts: #uncomment for docker model or ollama
+#      - "host.docker.internal:host-gateway"
+    deploy:
+      mode: global
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+
+x-n8n-base: &n8n-base
+    image: n8nio/n8n:stable
+    pull_policy: ${pull_policy}
+    restart: ${restart}
+    environment:
+      - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY}
+      - N8N_USER_MANAGEMENT_JWT_SECRET=${N8N_USER_MANAGEMENT_JWT_SECRET}
+      - N8N_RUNNERS_AUTH_TOKEN=${N8N_RUNNERS_AUTH_TOKEN}
+      - N8N_RUNNERS_GRANT_TOKEN=${N8N_RUNNERS_AUTH_TOKEN}
+      - NODE_ENV=production
+      - N8N_DIAGNOSTICS_ENABLED=false
+      - N8N_PERSONALIZATION_ENABLED=true
+      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
+      - EXECUTIONS_DATA_PRUNE=true
+      - EXECUTIONS_DATA_MAX_AGE=24
+      - EXECUTIONS_DATA_PRUNE_MAX_COUNT=100
+      - EXECUTIONS_DATA_SAVE_ON_SUCCESS=all #cambiar a none para no grabar las ejecuciones exitosas y mejorar el rendimiento
+      - EXECUTIONS_DATA_SAVE_ON_ERROR=all
+      - EXECUTIONS_DATA_SAVE_MANUAL_EXECUTIONS=true
+      - EXECUTIONS_DATA_SAVE_ON_PROGRESS=false
+      - N8N_SECURE_COOKIE=false
+      - DB_TYPE=${DB_TYPE}
+      - DB_POSTGRESDB_HOST=${DATABASE_HOST}
+      - DB_POSTGRESDB_PORT=${POSTGRESDB_PORT}
+      - DB_POSTGRESDB_DATABASE=${n8n_db_name}
+      - DB_POSTGRESDB_USER=${POSTGRES_USER}
+      - DB_POSTGRESDB_PASSWORD=${POSTGRES_PASSWORD}
+      - DB_POSTGRESDB_POOL_SIZE=2
+      - DB_POSTGRESDB_SSL_ENABLED=false
+      - N8N_TEMPLATES_ENABLED=true
+      - NODE_FUNCTION_ALLOW_EXTERNAL=*
+      - NODE_FUNCTION_ALLOW_BUILTIN=*
+      - N8N_HIRING_BANNER_ENABLED=false
+      - N8N_GRACEFUL_SHUTDOWN_TIMEOUT=30
+      - N8N_REINSTALL_MISSING_PACKAGES=true
+      - N8N_METRICS=false
+      - N8N_COMMUNITY_PACKAGES_ENABLED=true
+      - WEBHOOK_URL=${WEBHOOK_URL}
+      - N8N_EDITOR_BASE_URL=${WEBHOOK_URL}
+      - N8N_PAYLOAD_SIZE_MAX=${N8N_PAYLOAD_SIZE_MAX}
+      - N8N_FORMDATA_FILE_SIZE_MAX=${N8N_FORMDATA_FILE_SIZE_MAX}
+      - N8N_DEFAULT_BINARY_DATA_MODE=filesystem
+      - N8N_PUBLIC_API_SWAGGERUI_DISABLED=true
+      - N8N_RUNNERS_MODE=external
+      - N8N_NATIVE_PYTHON_RUNNER=true
+      - N8N_RUNNERS_BROKER_LISTEN_ADDRESS=0.0.0.0
+      - N8N_HIDE_USAGE_PAGE=false
+      - N8N_EMAIL_MODE=smtp
+      - N8N_SMTP_HOST=${N8N_SMTP_HOST}
+      - N8N_SMTP_PORT=${N8N_SMTP_PORT}
+      - N8N_SMTP_USER=${N8N_SMTP_USER}
+      - N8N_SMTP_PASS=${N8N_SMTP_PASS}
+      - N8N_SMTP_SENDER=${N8N_SMTP_USER}
+      - N8N_SMTP_SSL=false
+      - N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE=true
+      - GENERIC_TIMEZONE=${TIMEZONE}
+      - TZ=${TIMEZONE}
+      - EXECUTIONS_MODE=queue
+      - QUEUE_BULL_PREFIX=${nhostname}
+      - QUEUE_BULL_REDIS_DB=1
+      - QUEUE_BULL_REDIS_HOST=${rhostname}
+      - QUEUE_BULL_REDIS_PORT=${REDIS_PORT}
+      - QUEUE_BULL_REDIS_TIMEOUT_THRESHOLD=10000
+      - QUEUE_BULL_REDIS_TLS=false
+      - QUEUE_BULL_REDIS_DUALSTACK=false
+      - QUEUE_HEALTH_CHECK_ACTIVE=true
+      - QUEUE_BULL_REDIS_CONCURRENCY=5
+      - LANGCHAIN_ENDPOINT="https://api.smith.langchain.com"
+      - LANGCHAIN_TRACING_V2=true
+      - LANGCHAIN_API_KEY=${LANGCHAIN_API_KEY}
+      - LANGSMITH_PROJECT=${nhostname}
+      - N8N_VERSION_NOTIFICATIONS_ENABLED=false
+      - N8N_MFA_ENABLED=true
+      - N8N_BLOCK_ENV_ACCESS_IN_NODE=false
+      - OFFLOAD_MANUAL_EXECUTIONS_TO_WORKERS=true
+      - N8N_WORKER_SERVICE_NAME=${workername}
+      - N8N_TASK_BROKER_URL=http://${nhostname}:${N8N_PORT2}
+      - N8N_COMMAND_RESPONSE_URL=http://${nhostname}:${N8N_PORT2}
+      - N8N_TASK_BROKER_PORT=${N8N_PORT2}
+      - N8N_RUNNERS_BROKER_PORT=${N8N_PORT2}
+      - N8N_GIT_NODE_DISABLE_BARE_REPOS=true
+      - N8N_PROXY_HOPS=1
+      - N8N_PUSH_BACKEND="websocket"
+      - N8N_TRUST_PROXY=true
+      - NODES_EXCLUDE="[]"
+      - N8N_SKIP_AUTH_ON_OAUTH_CALLBACK=false
+      - N8N_DEFAULT_LOCALE=es
+      - N8N_RESTRICT_FILE_ACCESS_TO="/tmp/"
+      - NODE_OPTIONS="--dns-result-order=ipv4first"
+      - N8N_WORKFLOW_AUTODEACTIVATION_ENABLED=true
+    volumes:
+      - n8n_storage:/home/node/.n8n
+      - n8n_backup:/backup
+      - n8n_shared:/data/shared
+#    extra_hosts: #uncomment for docker model or ollama
+#      - "host.docker.internal:host-gateway"
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+    deploy:
+      mode: global
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+
+x-n8n-runner: &n8n-runner
+    image: n8nio/runners:stable
+    pull_policy: ${pull_policy}
+    restart: ${restart}
+    environment:
+      - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY}
+      - N8N_USER_MANAGEMENT_JWT_SECRET=${N8N_USER_MANAGEMENT_JWT_SECRET}
+      - N8N_RUNNERS_AUTH_TOKEN=${N8N_RUNNERS_AUTH_TOKEN}
+      - N8N_RUNNERS_GRANT_TOKEN=${N8N_RUNNERS_AUTH_TOKEN}
+      - NODE_ENV=production
+      - N8N_RUNNERS_TASK_BROKER_URI=http://${workername}:${N8N_PORT2}
+      - N8N_RUNNERS_AUTO_SHUTDOWN_TIMEOUT=15
+      - N8N_RUNNERS_LAUNCHER_HEALTH_CHECK_PORT=5680
+      - GENERIC_TIMEZONE=${TIMEZONE}
+      - TZ=${TIMEZONE}
+      - NODE_OPTIONS="--dns-result-order=ipv4first"
+#    volumes:
+#      - n8n_shared:/data/shared
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+    deploy:
+      mode: global
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+
+x-postgres-base: &postgres-base
+    image: postgres:17.6
+    hostname: ${DATABASE_HOST}
+    container_name: ${DATABASE_HOST}
+    pull_policy: ${pull_policy}
+    restart: ${restart}
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - TZ=${TIMEZONE}
+#    ports: #uncomment to expose port
+#      - ${POSTGRESDB_PORT}:5432
+    volumes:
+      - ./init:/docker-entrypoint-initdb.d:ro
+      - postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -h localhost -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
+      start_period: 5s
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+x-redis-base: &redis-base
+    image: redis/redis-stack:latest
+    hostname: ${rhostname}
+    container_name: ${rhostname}
+    pull_policy: ${pull_policy}
+    restart: ${restart}
+    environment:
+      - REDIS_ARGS=--save 20 3
+      - TZ=${TIMEZONE}
+    ports:
+#      - ${REDIS_PORT}:6379 #uncomment to expose port
+      - ${INSIGHT_PORT}:8001
+    volumes:
+      - redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli","ping"]
+      start_period: 5s
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+x-qdrant-base: &qdrant-base
+    image: qdrant/qdrant:latest
+    hostname: ${qhostname}
+    container_name: ${qhostname}
+    pull_policy: ${pull_policy}
+    restart: ${restart}
+    environment:
+      - QDRANT__SERVICE__GRPC_PORT=6334
+      - QDRANT__LOG_LEVEL=INFO
+      - TZ=${TIMEZONE}
+#    ports: #uncomment to expose port
+#      - ${qdrant}:6333
+    volumes:
+      - qdrant:/qdrant/storage
+
+x-nvidia-base: &nvidia-base
+    runtime: nvidia
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+x-proxy-base: &proxy-base
+    image: jc21/nginx-proxy-manager:latest
+    hostname: ${proxyhostname}
+    container_name: ${proxyhostname}
+    pull_policy: ${pull_policy}
+    restart: ${restart}
+    environment:
+      - DISABLE_IPV6=${DISABLE_IPV6}
+      - INITIAL_ADMIN_EMAIL=${INITIAL_ADMIN_EMAIL}
+      - INITIAL_ADMIN_PASSWORD=${INITIAL_ADMIN_PASSWORD}
+    ports:
+      - 80:80
+      - 443:443
+      - ${pproxy}:81
+    volumes:
+      - proxy_data:/data
+      - letsencrypt:/etc/letsencrypt
+    healthcheck:
+      test: ["CMD", "/usr/bin/check-health"]
+      interval: 10s
+      timeout: 3s
+
+x-searxng-base: &searxng-base
+    image: docker.io/searxng/searxng:latest
+    hostname: ${searxnghostname}
+    container_name: ${searxnghostname}
+    pull_policy: ${pull_policy}
+    restart: ${restart}
+    ports:
+      - ${psearch}:8080
+    volumes:
+      - ./searxng:/etc/searxng
+    environment:
+      - SEARXNG_BASE_URL=https://${SEARXNG_HOSTNAME}/
+      - UWSGI_WORKERS=${SEARXNG_UWSGI_WORKERS}
+      - UWSGI_THREADS=${SEARXNG_UWSGI_THREADS}
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+        max-file: "1"
+
+x-evolution-base: &evolution-base
+    image: evoapicloud/evolution-api:latest
+    init: true
+    hostname: ${evohostname}
+    container_name: ${evohostname}
+    restart: ${restart}
+    pull_policy: ${pull_policy}
+    environment:
+      - SERVER_TYPE=http
+      - SERVER_URL=${EVOLUTION_SERVER_URL}
+      - TELEMETRY=false
+      - CORS_ORIGIN=*
+      - DEL_INSTANCE=false
+      - DEL_TEMP_INSTANCES=false
+      - WEBSOCKET_ENABLED=false
+      - WEBSOCKET_GLOBAL_EVENTS=false
+      - LANGUAGE=en
+      - AUTHENTICATION_API_KEY=${evoapikey}
+      - DATABASE_ENABLED=true
+      - DATABASE_PROVIDER=postgresql
+      - DATABASE_CONNECTION_URI=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DATABASE_HOST}:${POSTGRESDB_PORT}/${evodb}?schema=public
+      - DATABASE_CONNECTION_CLIENT_NAME=evolution_exchange
+      - DATABASE_SAVE_DATA_INSTANCE=true
+      - DATABASE_SAVE_DATA_NEW_MESSAGE=true
+      - DATABASE_SAVE_MESSAGE_UPDATE=true
+      - DATABASE_SAVE_DATA_CONTACTS=true
+      - DATABASE_SAVE_DATA_CHATS=true
+      - DATABASE_SAVE_DATA_LABELS=true
+      - DATABASE_SAVE_DATA_HISTORIC=true
+      - CACHE_REDIS_ENABLED=true
+      - CACHE_REDIS_URI=redis://${rhostname}:${REDIS_PORT}/3
+      - CACHE_REDIS_PREFIX_KEY=${evohostname}
+      - CACHE_REDIS_TTL=604800
+      - CACHE_REDIS_SAVE_INSTANCES=false
+      - CACHE_LOCAL_ENABLED=false
+      - TZ=${TIMEZONE}
+#      - CONFIG_SESSION_PHONE_VERSION=2.3000.1033096875
+    ports:
+      - ${evoport}:8080
+    volumes:
+      - evolution:/evolution/instances
+    deploy:
+      mode: global
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+
+
+
+volumes:
+  ollama:
+  openwebui:
+  n8n_storage:
+  n8n_backup:
+  n8n_shared:
+  postgres:
+  redis:
+  qdrant:
+  proxy_data:
+  letsencrypt:
+  evolution:
+
+################################################
+
+services:
+    n8n-all:
+      <<: *n8n-base
+      hostname: ${nhostname}
+      container_name: ${nhostname}
+      profiles: ["n8n"]
+      ports:
+        - ${N8N_PORT}:5678
+        - ${N8N_PORT2}:5679
+      healthcheck:
+        test: ["CMD", "sh", "-c", "(wget -q -T 5 -O - http://127.0.0.1:5678/healthz 2>/dev/null | grep -qF '{\"status\":\"ok\"}') || exit 1"]
+        start_period: 1m00s
+        interval: 5s
+        timeout: 10s
+        retries: 10
+      links:
+        - redis-all
+      depends_on:
+        postgres-all:
+          condition: service_healthy
+          restart: true
+        redis-all:
+          condition: service_healthy
+          restart: true
+
+    n8n-worker:
+      <<: *n8n-base
+      hostname: ${workername}
+      container_name: ${workername}
+      profiles: ["n8n-worker"]
+      command: worker
+      healthcheck:
+        test: ["CMD", "node", "-v"]
+        start_period: 1m00s
+        interval: 5s
+        timeout: 10s
+        retries: 10
+      links:
+        - redis-all
+      depends_on:
+        postgres-all:
+          condition: service_healthy
+          restart: true
+        redis-all:
+          condition: service_healthy
+          restart: true
+        n8n-all:
+          condition: service_healthy
+          restart: true
+
+    n8n-runner:
+      <<: *n8n-runner
+      hostname: ${runnername}
+      container_name: ${runnername}
+      profiles: ["n8n-runner"]
+      healthcheck:
+        test: ["CMD", "node", "-v"]
+        start_period: 1m00s
+        interval: 5s
+        timeout: 10s
+        retries: 10
+      links:
+        - redis-all
+      depends_on:
+        postgres-all:
+          condition: service_healthy
+          restart: true
+        redis-all:
+          condition: service_healthy
+          restart: true
+        n8n-worker:
+          condition: service_healthy
+          restart: true
+
+    postgres-all:
+      <<: *postgres-base
+      profiles: ["n8n", "evolutionapi", "n8n-worker", "postgres-all"]
+
+    redis-all:
+      <<: *redis-base
+      profiles: ["n8n", "openwebui", "evolutionapi", "n8n-worker", "redis-all"]
+
+    qdrant-all:
+      <<: *qdrant-base
+      profiles: ["qdrant"]
+
+    openwebui-all:
+      <<: *openwebui-base
+      profiles: ["openwebui"]
+      links:
+        - redis-all
+      depends_on:
+        redis-all:
+          condition: service_healthy
+          restart: true
+        postgres-all:
+          condition: service_healthy
+          restart: true
+
+    ollama-others:
+      <<: *ollama-base
+      profiles: ["ollama-cpu"]
+      environment:
+        - OLLAMA_DEBUG=${OLLAMA_DEBUG}
+        - OLLAMA_KEEP_ALIVE=${OLLAMA_KEEP_ALIVE}
+        - OLLAMA_MAX_LOADED_MODELS=${OLLAMA_MAX_LOADED_MODELS}
+        - OLLAMA_MAX_QUEUE=${OLLAMA_MAX_QUEUE}
+        - OLLAMA_NUM_PARALLEL=${OLLAMA_NUM_PARALLEL}
+        - OLLAMA_NOPRUNE=${OLLAMA_NOPRUNE}
+        - OLLAMA_SCHED_SPREAD=${OLLAMA_SCHED_SPREAD}
+        - OLLAMA_FLASH_ATTENTION=${OLLAMA_FLASH_ATTENTION}
+        - OLLAMA_KV_CACHE_TYPE=${OLLAMA_KV_CACHE_TYPE}
+        - OLLAMA_LOAD_TIMEOUT=${OLLAMA_LOAD_TIMEOUT}
+        - OLLAMA_MAX_QUEUE=${OLLAMA_MAX_QUEUE}
+        - OLLAMA_CONTEXT_LENGTH=${OLLAMA_CONTEXT_LENGTH}
+
+    ollama-nvidia:
+      <<: [*ollama-base, *nvidia-base]
+      profiles: ["ollama-gpu"]
+      environment:
+        - NVIDIA_VISIBLE_DEVICES=all
+        - NVIDIA_DRIVER_CAPABILITIES=compute,utility,video
+        - OLLAMA_DEBUG=${OLLAMA_DEBUG}
+        - OLLAMA_KEEP_ALIVE=${OLLAMA_KEEP_ALIVE}
+        - OLLAMA_MAX_LOADED_MODELS=${OLLAMA_MAX_LOADED_MODELS}
+        - OLLAMA_MAX_QUEUE=${OLLAMA_MAX_QUEUE}
+        - OLLAMA_NUM_PARALLEL=${OLLAMA_NUM_PARALLEL}
+        - OLLAMA_NOPRUNE=${OLLAMA_NOPRUNE}
+        - OLLAMA_SCHED_SPREAD=${OLLAMA_SCHED_SPREAD}
+        - OLLAMA_FLASH_ATTENTION=${OLLAMA_FLASH_ATTENTION}
+        - OLLAMA_KV_CACHE_TYPE=${OLLAMA_KV_CACHE_TYPE}
+        - OLLAMA_LOAD_TIMEOUT=${OLLAMA_LOAD_TIMEOUT}
+        - OLLAMA_MAX_QUEUE=${OLLAMA_MAX_QUEUE}
+        - OLLAMA_CONTEXT_LENGTH=${OLLAMA_CONTEXT_LENGTH}
+
+    proxy:
+      <<: *proxy-base
+      profiles: ["proxy"]
+
+    searxng:
+      <<: *searxng-base
+      profiles: ["searxng"]
+
+    evolutionapi:
+      <<: *evolution-base
+      profiles: [ "evolutionapi" ]
+      links:
+        - redis-all
+      depends_on:
+        postgres-all:
+          condition: service_healthy
+          restart: true
+        redis-all:
+          condition: service_healthy
+          restart: true
+
