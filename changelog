@@ -1,4 +1,29 @@
-* commit b8491364c9052c08825d754186b73a2109d9b7ae (HEAD -> main, origin/main, origin/HEAD)
+* commit 918d47312762bb913892d842201621dedace45ee (HEAD -> main, origin/main, origin/HEAD)
+| Author: Jesus Palencia <sinfallas@gmail.com>
+| Date:   Wed May 20 19:58:47 2026 -0400
+| 
+|     * documentacion
+|     * limpieza
+| 
+* commit 8c235740aa420f68887656cab7e1086b3ae850ba
+| Author: Jesus Palencia <sinfallas@gmail.com>
+| Date:   Wed May 20 19:48:45 2026 -0400
+| 
+|     * changelog
+| 
+* commit d1b552ca0d304de388fac6b47a955a6403a5e7f9
+| Author: Jesus Palencia <sinfallas@gmail.com>
+| Date:   Wed May 20 19:48:38 2026 -0400
+| 
+|     * bugfix
+| 
+* commit eea6c4b3ba3bab5d28d4e20c18e4f1844c3fd8b3
+| Author: Jesus Palencia <sinfallas@gmail.com>
+| Date:   Wed May 20 19:20:04 2026 -0400
+| 
+|     * changelog
+| 
+* commit b8491364c9052c08825d754186b73a2109d9b7ae
 | Author: Jesus Palencia <sinfallas@gmail.com>
 | Date:   Wed May 20 19:19:56 2026 -0400
 | 
