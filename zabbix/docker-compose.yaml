@@ -490,3 +490,4 @@ secrets:
     file: ./env_vars/.POSTGRES_USER
   POSTGRES_PASSWORD:
     file: ./env_vars/.POSTGRES_PASSWORD
+
