@@ -25,6 +25,9 @@ redis/
 mysql/
 n8n_data/
 **/data/
+zbx_env/
+snmptraps/
+searxng/
 
 ### --- Docker & Logs ---
 *.log
