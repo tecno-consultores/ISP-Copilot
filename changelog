@@ -1,4 +1,16 @@
-* commit 9401bddc3a61772a2642a2a18924a7ce8311399b (HEAD -> main, origin/main, origin/HEAD)
+* commit b8491364c9052c08825d754186b73a2109d9b7ae (HEAD -> main, origin/main, origin/HEAD)
+| Author: Jesus Palencia <sinfallas@gmail.com>
+| Date:   Wed May 20 19:19:56 2026 -0400
+| 
+|     * gitignore
+| 
+* commit 8477b691a188c7d833d3b912c8a3763f95972e31
+| Author: Jesus Palencia <sinfallas@gmail.com>
+| Date:   Wed May 20 19:15:27 2026 -0400
+| 
+|     * changelog
+| 
+* commit 9401bddc3a61772a2642a2a18924a7ce8311399b
 | Author: Jesus Palencia <sinfallas@gmail.com>
 | Date:   Wed May 20 19:15:16 2026 -0400
 | 
