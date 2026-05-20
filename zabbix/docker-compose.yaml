@@ -6,7 +6,6 @@ services:
     depends_on:
       postgres-server:
         condition: service_started
-    init: true
     attach: true
     volumes:
       - ./zbx_env/var/lib/zabbix/dbscripts:/var/lib/zabbix/dbscripts:ro
@@ -154,10 +153,9 @@ services:
     secrets:
       - POSTGRES_USER
       - POSTGRES_PASSWORD
-    init: true
     ports:
       - "161:161"
-#      - "10050:10050"
+      - "10051:10051"
     restart: unless-stopped
     attach: true
     volumes:
@@ -172,7 +170,7 @@ services:
       - ./zbx_env/var/lib/zabbix/ssl/certs:/var/lib/zabbix/ssl/certs:ro
       - ./zbx_env/var/lib/zabbix/ssl/keys:/var/lib/zabbix/ssl/keys:ro
       - ./zbx_env/var/lib/zabbix/ssl/ssl_ca:/var/lib/zabbix/ssl/ssl_ca:rw
-      - ./snmptraps:/var/lib/zabbix/snmptraps:roz
+      - ./snmptraps:/var/lib/zabbix/snmptraps:ro
     tmpfs: /tmp
     deploy:
       resources:
@@ -183,16 +181,14 @@ services:
           cpus: '0.5'
           memory: 512M
     stop_grace_period: 30s
-#  devices:
-#   - "/dev/ttyUSB0:/dev/ttyUSB0"
-#  cap_add:
-#    - "NET_RAW"
+    cap_add:
+      - "NET_RAW"
     sysctls:
       - net.ipv4.ip_local_port_range=1024 64999
       - net.ipv4.conf.all.accept_redirects=0
       - net.ipv4.conf.all.secure_redirects=0
       - net.ipv4.conf.all.send_redirects=0
-#      - net.ipv4.ping_group_range=0 1995
+      - net.ipv4.ping_group_range=0 1995
     logging:
       options:
         max-size: "10m"
@@ -295,7 +291,6 @@ services:
     image: zabbix/zabbix-agent:ubuntu-7.4-latest
     hostname: zabbix-agent
     container_name: zabbix-agent
-    init: true
     ports:
       - "10050:10050"
     restart: unless-stopped
@@ -380,7 +375,7 @@ services:
     attach: false
     read_only: true
     volumes:
-      - ./snmptraps:/var/lib/zabbix/snmptraps:rwz
+      - ./snmptraps:/var/lib/zabbix/snmptraps:rw
       - ./zbx_env/var/lib/zabbix/snmptrapd_config:/var/lib/zabbix/snmptrapd_config:rw
     tmpfs: /tmp
     deploy:
@@ -409,8 +404,6 @@ services:
     volumes:
       - ./zbx_env/var/lib/zabbix/enc:/var/lib/zabbix/enc:ro
     tmpfs: /tmp
-    security_opt:
-      - seccomp:./env_vars/chrome_dp.json
     deploy:
       resources:
         limits:
