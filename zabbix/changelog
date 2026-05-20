@@ -1,0 +1,79 @@
+* commit d1b552ca0d304de388fac6b47a955a6403a5e7f9 (HEAD -> main, origin/main, origin/HEAD)
+| Author: Jesus Palencia <sinfallas@gmail.com>
+| Date:   Wed May 20 19:48:38 2026 -0400
+| 
+|     * bugfix
+| 
+* commit eea6c4b3ba3bab5d28d4e20c18e4f1844c3fd8b3
+| Author: Jesus Palencia <sinfallas@gmail.com>
+| Date:   Wed May 20 19:20:04 2026 -0400
+| 
+|     * changelog
+| 
+* commit b8491364c9052c08825d754186b73a2109d9b7ae
+| Author: Jesus Palencia <sinfallas@gmail.com>
+| Date:   Wed May 20 19:19:56 2026 -0400
+| 
+|     * gitignore
+| 
+* commit 8477b691a188c7d833d3b912c8a3763f95972e31
+| Author: Jesus Palencia <sinfallas@gmail.com>
+| Date:   Wed May 20 19:15:27 2026 -0400
+| 
+|     * changelog
+| 
+* commit 9401bddc3a61772a2642a2a18924a7ce8311399b
+| Author: Jesus Palencia <sinfallas@gmail.com>
+| Date:   Wed May 20 19:15:16 2026 -0400
+| 
+|     * readme
+| 
+* commit dc82a37cbd58ee0ed048ef8150b4cb8eccc06c0d
+| Author: Jesus Palencia <sinfallas@gmail.com>
+| Date:   Wed May 13 21:04:49 2026 -0400
+| 
+|     * changelog
+| 
+* commit a50192499e3cfaee9eb9849a22a0d04f5b2441f7
+| Author: Jesus Palencia <sinfallas@gmail.com>
+| Date:   Wed May 13 21:04:36 2026 -0400
+| 
+|     * variables de n8n
+| 
+* commit a364702b601bcfcf11fd4a5e3667b93ff4292ad2
+| Author: Jesus Palencia <sinfallas@gmail.com>
+| Date:   Wed May 13 21:00:12 2026 -0400
+| 
+|     * changelog
+| 
+* commit 1ce7164c2d85b7e83528481b1844e2ca99139af2
+| Author: Jesus Palencia <sinfallas@gmail.com>
+| Date:   Wed May 13 21:00:06 2026 -0400
+| 
+|     * n8n
+| 
+* commit 7d6f38ca4a0d98ff4a1350da28bf4c1c1af222fb
+| Author: Jesus Palencia <sinfallas@gmail.com>
+| Date:   Wed May 13 20:49:50 2026 -0400
+| 
+|     * changelog
+| 
+* commit d48c6639cfecaea791321fce566ddacb80a5ddb2
+| Author: Jesus Palencia <sinfallas@gmail.com>
+| Date:   Wed May 13 20:49:42 2026 -0400
+| 
+|     * zabbix
+| 
+* commit 6f969e0a76666e668987f63ec8da7ba75f57ebed
+| Author: Sinfallas <sinfallas@yahoo.com>
+| Date:   Wed May 13 20:37:41 2026 -0400
+| 
+|     Expand README with ISP-Copilot features
+|     
+|     Added detailed description of ISP-Copilot features and capabilities.
+| 
+* commit 7fd86ea95b46f6d783074f9c26b2b3e36be429f3
+  Author: Sinfallas <sinfallas@yahoo.com>
+  Date:   Wed May 13 20:36:58 2026 -0400
+  
+      Initial commit
