@@ -23,7 +23,6 @@ El repositorio está dividido en módulos independientes:
 
 *   Docker y Docker Compose instalado.
 *   Ubuntu 24.04 o superior (Recomendado).
-*   Una red Docker compartida: `docker network create isp_net`.
 
 ## 📄 Licencia
 
