@@ -1,0 +1,48 @@
+nombre:		n8n
+URL		La url del n8n en produccion
+event_id	{EVENT.ID}
+event_name	{EVENT.NAME}
+event_severity	{EVENT.SEVERITY}
+host_name	{HOST.NAME}
+host_ip	{HOST.IP}
+trigger_description	{TRIGGER.DESCRIPTION}
+item_last_value	{ITEM.LASTVALUE}
+inventory_vendor	{INVENTORY.VENDOR}
+
+script
+-------------------------
+
+try {
+    // 1. Parsear los parámetros enviados por Zabbix
+    var params = JSON.parse(value),
+        req = new HttpRequest(),
+        response;
+
+    // 2. Extraer y validar la URL de forma segura
+    if (!params.URL) {
+        throw 'El parámetro "URL" no está definido en la lista de variables.';
+    }
+    var webhook_url = params.URL.trim();
+
+    req.addHeader('Content-Type: application/json');
+    
+    // 3. Remover la variable URL del payload para no enviarla a n8n
+    delete params.URL;
+
+    // 4. Ejecutar el POST
+    Zabbix.log(4, '[n8n Webhook] Enviando datos a: ' + webhook_url);
+    response = req.post(webhook_url, JSON.stringify(params));
+
+    // 5. Verificar el estado de la respuesta
+    if (req.getStatus() !== 200) {
+        throw 'Código de respuesta HTTP del servidor: ' + req.getStatus();
+    }
+
+    return 'OK';
+}
+catch (error) {
+    Zabbix.log(3, '[n8n Webhook] Error crítico: ' + error);
+    throw 'N8N Webhook failed: ' + error;
+}
+
+-------------------------
