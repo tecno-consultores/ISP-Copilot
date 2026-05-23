@@ -1,4 +1,16 @@
-* commit eb69f22ececfdfd16825fbe4b2cf7b1c2044999a (HEAD -> main, origin/main, origin/HEAD)
+* commit f85a89c30d7bee383cbe2707257004f4e98d8cec (HEAD -> main, origin/main, origin/HEAD)
+| Author: Jesus Palencia <sinfallas@gmail.com>
+| Date:   Sat May 23 11:43:48 2026 -0400
+| 
+|     * bugfix
+| 
+* commit 9dbcaf3ef4ce5062ee07fc5857d8ce8c668aa2ce
+| Author: Jesus Palencia <sinfallas@gmail.com>
+| Date:   Sat May 23 11:36:59 2026 -0400
+| 
+|     * changelog
+| 
+* commit eb69f22ececfdfd16825fbe4b2cf7b1c2044999a
 | Author: Jesus Palencia <sinfallas@gmail.com>
 | Date:   Sat May 23 11:36:39 2026 -0400
 | 
