@@ -155,7 +155,7 @@ services:
       - POSTGRES_PASSWORD
     ports:
       - "161:161"
-      - "10051:10051" # se utiliza este puerto para no abrir puerto en el firewall del lado del cliente y trasladar el uso de cpu al lado del servidor
+      - "10051:10051" # se utiliza este puerto para no abrir puerto en el firewall del lado del cliente y traslada el uso de cpu (del agente) al lado del servidor
     restart: unless-stopped
     attach: true
     volumes:
