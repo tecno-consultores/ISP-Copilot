@@ -15,9 +15,9 @@ Este proyecto integra el monitoreo robusto de **Zabbix** con la orquestación in
 
 El repositorio está dividido en módulos independientes:
 
-*   [`/zabbix-stack`](./zabbix-stack): Configuración de Docker para Zabbix Server, Base de Datos y Web Interface.
-*   [`/n8n-stack`](./n8n-stack): Configuración de n8n para la orquestación de flujos de IA.
-*   [`/ai-core`](./ai-core): Prompts y configuraciones del agente inteligente.
+*   [`/zabbix`](./zabbix): Configuración de Docker para Zabbix Server, Base de Datos y Web Interface.
+*   [`/n8n`](./n8n): Configuración de n8n para la orquestación de flujos de IA.
+*   [`/ai`](./ai): Prompts y configuraciones del agente inteligente.
 
 ## 🛠️ Requisitos Previos
 
