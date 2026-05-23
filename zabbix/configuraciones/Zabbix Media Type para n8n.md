@@ -62,7 +62,7 @@ catch (error) {
     Zabbix.log(3, '[n8n Webhook] Error crítico: ' + error);
     throw 'N8N Webhook failed: ' + error;
 }
-
+```
 
 ## Message template
 
