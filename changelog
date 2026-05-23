@@ -1,4 +1,16 @@
-* commit f85a89c30d7bee383cbe2707257004f4e98d8cec (HEAD -> main, origin/main, origin/HEAD)
+* commit 88dbb6972f599ba6455aae191ba64b5f57d3391d (HEAD -> main, origin/main, origin/HEAD)
+| Author: Jesus Palencia <sinfallas@gmail.com>
+| Date:   Sat May 23 12:05:04 2026 -0400
+| 
+|     * parametros para webhook
+| 
+* commit 882a8c64c677c673a6d0180b82f42645bc35ffd6
+| Author: Jesus Palencia <sinfallas@gmail.com>
+| Date:   Sat May 23 11:43:55 2026 -0400
+| 
+|     * changelog
+| 
+* commit f85a89c30d7bee383cbe2707257004f4e98d8cec
 | Author: Jesus Palencia <sinfallas@gmail.com>
 | Date:   Sat May 23 11:43:48 2026 -0400
 | 
