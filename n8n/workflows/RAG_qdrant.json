@@ -1,0 +1,197 @@
+{
+  "name": "RAG_qdrant",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "subir",
+        "formDescription": "archivo",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "data",
+              "fieldType": "file",
+              "acceptFileTypes": "*.pdf",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "6c6d9cdd-a9f9-4045-88dd-91abd116c808",
+      "name": "subir",
+      "webhookId": "fdf84f6f-68b0-460b-8832-22f1e8cf4835"
+    },
+    {
+      "parameters": {
+        "model": "nomic-embed-text-v2-moe:latest"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOllama",
+      "typeVersion": 1,
+      "position": [
+        160,
+        208
+      ],
+      "id": "583307e9-a9ed-4775-ba74-a3cb3b7fca17",
+      "name": "Embeddings Ollama",
+      "credentials": {
+        "ollamaApi": {
+          "id": "oFohSf9SDRRVmRrg",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "qdrantCollection": {
+          "__rl": true,
+          "value": "copilot",
+          "mode": "id"
+        },
+        "embeddingBatchSize": 512,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
+      "typeVersion": 1.3,
+      "position": [
+        208,
+        0
+      ],
+      "id": "36f1e419-3497-4dd2-8f48-30d35198ff1d",
+      "name": "Qdrant Vector Store",
+      "credentials": {
+        "qdrantApi": {
+          "id": "19XLKMgAsZ4G396y",
+          "name": "Qdrant account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "loader": "pdfLoader",
+        "textSplittingMode": "custom",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        288,
+        208
+      ],
+      "id": "d183e900-0dbe-48e2-a909-8a48fadae7c7",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "chunkSize": 400,
+        "chunkOverlap": 50,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        256,
+        384
+      ],
+      "id": "d3099300-bf6c-48b0-b93f-91f4b19aaf5f",
+      "name": "Recursive Character Text Splitter"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "subir": {
+      "main": [
+        [
+          {
+            "node": "Qdrant Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Ollama": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Qdrant Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Qdrant Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "545b7820-52af-4ae2-a134-356467ab7584",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5d7cd8c0612c3c9f6b1aaad343a794c642582938ff7ecf165a06281225de139b"
+  },
+  "id": "gOKbcJ019mt6aIDF",
+  "tags": [
+    {
+      "name": "sinfallas",
+      "id": "U2MIWXcoDivkiM54",
+      "updatedAt": "2026-05-23T20:06:29.375Z",
+      "createdAt": "2026-05-23T20:06:29.375Z"
+    },
+    {
+      "name": "eratostenes",
+      "id": "FwwEm2jcQso7z9sQ",
+      "updatedAt": "2026-05-23T20:06:29.382Z",
+      "createdAt": "2026-05-23T20:06:29.382Z"
+    },
+    {
+      "name": "ia",
+      "id": "0lw1czJoo3nYYMgU",
+      "updatedAt": "2026-05-23T20:06:29.384Z",
+      "createdAt": "2026-05-23T20:06:29.384Z"
+    },
+    {
+      "name": "rag",
+      "id": "rBhZmhiZLRNqHzQL",
+      "updatedAt": "2026-05-23T20:06:29.390Z",
+      "createdAt": "2026-05-23T20:06:29.390Z"
+    },
+    {
+      "name": "cohere",
+      "id": "mA9TF1MkT0fmMA7m",
+      "updatedAt": "2026-05-23T20:06:29.390Z",
+      "createdAt": "2026-05-23T20:06:29.390Z"
+    }
+  ]
+}
