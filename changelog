@@ -1,4 +1,16 @@
-* commit 466be018b52c61762fdfbda831e044658687b475 (HEAD -> main, origin/main, origin/HEAD)
+* commit f53482a9f61798bab5f0f6ffa02b4f2e89e9573c (HEAD -> main, origin/main, origin/HEAD)
+| Author: Jesus Palencia <sinfallas@gmail.com>
+| Date:   Sat May 23 14:48:42 2026 -0400
+| 
+|     * documentacion para RAG
+| 
+* commit 7987fccac04a02202e7ec8b403701267871dae73
+| Author: Jesus Palencia <sinfallas@gmail.com>
+| Date:   Sat May 23 14:41:19 2026 -0400
+| 
+|     * changelog
+| 
+* commit 466be018b52c61762fdfbda831e044658687b475
 | Author: Jesus Palencia <sinfallas@gmail.com>
 | Date:   Sat May 23 14:40:57 2026 -0400
 | 
