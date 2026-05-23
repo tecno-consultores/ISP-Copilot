@@ -257,8 +257,8 @@ services:
       - POSTGRES_USER
       - POSTGRES_PASSWORD
     ports:
-      - "80:8080"
-      - "43:8443"
+      - "8080:8080"
+      - "8443:8443"
     restart: unless-stopped
     attach: false
     volumes:
