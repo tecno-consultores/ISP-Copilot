@@ -1,0 +1,2 @@
+ssh: n8n-nodes-sshv2
+
