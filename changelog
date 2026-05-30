@@ -1,4 +1,16 @@
-* commit a7319c5a3a04ba8bac88092e78e8dffe9a2a22f4 (HEAD -> main, origin/main, origin/HEAD)
+* commit 29f8e318df01cfffb1c5a7398f731b89426216c4 (HEAD -> main, origin/main, origin/HEAD)
+| Author: Jesus Palencia <sinfallas@gmail.com>
+| Date:   Sat May 30 19:24:39 2026 -0400
+| 
+|     * se agrega semaphore
+| 
+* commit 6b80755c813883e301e2ddbd21772cb5d158a23b
+| Author: Jesus Palencia <sinfallas@gmail.com>
+| Date:   Sat May 30 19:19:30 2026 -0400
+| 
+|     * changelog
+| 
+* commit a7319c5a3a04ba8bac88092e78e8dffe9a2a22f4
 | Author: Jesus Palencia <sinfallas@gmail.com>
 | Date:   Sat May 30 19:19:15 2026 -0400
 | 
