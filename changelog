@@ -1,4 +1,16 @@
-* commit 29f8e318df01cfffb1c5a7398f731b89426216c4 (HEAD -> main, origin/main, origin/HEAD)
+* commit 79204f4dc9bf667fc194636f147d25a04a166fd0 (HEAD -> main, origin/main, origin/HEAD)
+| Author: Jesus Palencia <sinfallas@gmail.com>
+| Date:   Sat May 30 19:34:23 2026 -0400
+| 
+|     * se agregan los healthcheck de graylog y semaphore
+| 
+* commit f666fe916381523d4eda58df5672819296dc5566
+| Author: Jesus Palencia <sinfallas@gmail.com>
+| Date:   Sat May 30 19:24:52 2026 -0400
+| 
+|     * changelog
+| 
+* commit 29f8e318df01cfffb1c5a7398f731b89426216c4
 | Author: Jesus Palencia <sinfallas@gmail.com>
 | Date:   Sat May 30 19:24:39 2026 -0400
 | 
