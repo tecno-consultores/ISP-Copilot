@@ -1,0 +1,28 @@
+services:
+  semaphore:
+    image: semaphoreui/semaphore:latest
+    container_name: semaphore
+    hostname: semaphore
+    restart: always
+    pull_policy: always
+    ports:
+      - 3000:3000
+    environment:
+      - SEMAPHORE_DB_DIALECT=sqlite
+      - SEMAPHORE_PLAYBOOK_PATH=/tmp/semaphore/
+      - SEMAPHORE_ADMIN_PASSWORD=Qz4L4Yqjz4MMBqmfZCulWhpjC1n02Yx3 #change me (head -c32 /dev/urandom | base64)
+      - SEMAPHORE_ADMIN_NAME=admin #change me
+      - SEMAPHORE_ADMIN_EMAIL=admin@example.com
+      - SEMAPHORE_ADMIN=admin
+      - SEMAPHORE_ACCESS_KEY_ENCRYPTION=ZEreZfJtpmfAFPvRwIv3Xb2OJdAuNpibBLB0HMrnyPI= #change me (head -c32 /dev/urandom | base64)
+      - SEMAPHORE_COOKIE_ENCRYPTION=ByLANCwWIzNx5b4FZNJN8YIuFJQBLB8W #change me
+      - SEMAPHORE_COOKIE_HASH=IMqsnJ1XopAXhIkBPOiDVB2sYQjvlmk2 #change me
+      - ANSIBLE_HOST_KEY_CHECKING=false
+      - SEMAPHORE_SCHEDULE_TIMEZONE=America/Caracas
+    volumes:
+      - ./inventory/:/inventory:rw
+      - ./authorized-keys/:/authorized-keys:rw
+      - ./semaphore_data:/var/lib/semaphore:rw
+      - ./semaphore_config:/etc/semaphore:rw
+      - ./semaphore_tmp:/tmp/semaphore:rw
+
