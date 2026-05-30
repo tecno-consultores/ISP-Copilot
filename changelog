@@ -1,4 +1,16 @@
-* commit 4ea8ddb0be269fe357e8f6e1f7159fceda08d578 (HEAD -> main, origin/main, origin/HEAD)
+* commit 505b878acf0083ab7c7607aa522d259502418fa4 (HEAD -> main, origin/main, origin/HEAD)
+| Author: Jesus Palencia <sinfallas@gmail.com>
+| Date:   Sat May 30 18:43:39 2026 -0400
+| 
+|     * se agrega graylog
+| 
+* commit 2b8a9bd2266021096cc20ac4409d8bafe5c45915
+| Author: Jesus Palencia <sinfallas@gmail.com>
+| Date:   Sat May 23 16:29:43 2026 -0400
+| 
+|     * changelog
+| 
+* commit 4ea8ddb0be269fe357e8f6e1f7159fceda08d578
 | Author: Jesus Palencia <sinfallas@gmail.com>
 | Date:   Sat May 23 16:29:35 2026 -0400
 | 
