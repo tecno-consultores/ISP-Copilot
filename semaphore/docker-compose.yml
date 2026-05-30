@@ -19,6 +19,12 @@ services:
       - SEMAPHORE_COOKIE_HASH=IMqsnJ1XopAXhIkBPOiDVB2sYQjvlmk2 #change me
       - ANSIBLE_HOST_KEY_CHECKING=false
       - SEMAPHORE_SCHEDULE_TIMEZONE=America/Caracas
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/api/ping > /dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
     volumes:
       - ./inventory/:/inventory:rw
       - ./authorized-keys/:/authorized-keys:rw

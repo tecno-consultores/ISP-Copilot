@@ -9,6 +9,12 @@ services:
       - ./mongo_data:/data/db
     networks:
       - graynet
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
 
   opensearch:
     image: opensearchproject/opensearch:2.2.0
@@ -37,6 +43,12 @@ services:
       - 9200:9200/tcp
     networks:
       - graynet
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   graylog:
     image: graylog/graylog:5.1
@@ -86,6 +98,12 @@ services:
       - 12201:12201/tcp # GELF
       - 12201:12201/udp # GELF
       - 50001:50001/udp # prueba syslog udp
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s -f http://localhost:9000/api/system/cluster/node || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
 networks:
   graynet:
