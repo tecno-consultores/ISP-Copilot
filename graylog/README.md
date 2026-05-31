@@ -1,6 +1,6 @@
-# Semaphore
+# Graylog
 
-Instalador de semaphore mediante docker.
+Instalador de Graylog mediante docker.
 
 * Para realizar la instalacion ejecute:
 
