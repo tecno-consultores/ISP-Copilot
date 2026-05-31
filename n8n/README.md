@@ -29,7 +29,4 @@ Otros perfiles que puede correr:
 | NGINX proxy manager | 81 | http://127.0.0.1:81 |
 | Searxng | 8181 | http://127.0.0.1:8181 |
 | EvolutionAPI | 9191 | http://127.0.0.1:9191/manager |
-| Flowise | 3001 | http://127.0.0.1:3001 |
-| Opencode | 4096 | http://127.0.0.1:4096 |
-| OpenClaw | 18789 | http://127.0.0.1:18789 |
 | Redis Insight | 8001 | http://127.0.0.1:8001 |
