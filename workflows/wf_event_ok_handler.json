@@ -1,0 +1,71 @@
+{
+  "name": "wf_event_ok_handler",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "zabbix/ok",
+        "httpMethod": "POST"
+      },
+      "id": "1",
+      "name": "Webhook OK",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        200,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE isp.tickets SET estado='CERRADO' WHERE ticket_id='{{$json.ticket_id}}';"
+      },
+      "id": "2",
+      "name": "Close Ticket",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        500,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{$env.TELEGRAM_CHAT_ID}}",
+        "text": "Ticket {{$json.ticket_id}} resuelto por Zabbix (estado OK)."
+      },
+      "id": "3",
+      "name": "Notify Telegram",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        800,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook OK": {
+      "main": [
+        [
+          {
+            "node": "Close Ticket",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Close Ticket": {
+      "main": [
+        [
+          {
+            "node": "Notify Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

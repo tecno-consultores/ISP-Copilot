@@ -1,0 +1,172 @@
+{
+  "name": "wf_event_controller_zabbix",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "zabbix/event",
+        "httpMethod": "POST"
+      },
+      "id": "1",
+      "name": "Webhook Zabbix",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        200,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst event=$json;\nreturn [{json:{\n ticket_id:`ISP-${Date.now()}`,\n severity:event.severity||'average',\n host:event.host||'unknown',\n problem:event.problem||'unknown',\n raw:event\n}}];\n"
+      },
+      "id": "2",
+      "name": "Normalize Event",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        450,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO isp.tickets(ticket_id,origen,estado,prioridad,resumen) VALUES('{{ $json.ticket_id }}','zabbix','ABIERTO','{{ $json.severity }}','{{ $json.problem }}');"
+      },
+      "id": "3",
+      "name": "Create Ticket",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        700,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "prompt": "Analiza el evento Zabbix y determina si requiere escalamiento inmediato: {{$json.problem}}"
+      },
+      "id": "4",
+      "name": "AI Analysis",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1,
+      "position": [
+        950,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json.severity}}",
+              "operation": "contains",
+              "value2": "high"
+            }
+          ]
+        }
+      },
+      "id": "5",
+      "name": "Critical?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{$env.TELEGRAM_CHAT_ID}}",
+        "text": "Aprobar acci\u00f3n para ticket {{$json.ticket_id}} problema {{$json.problem}}"
+      },
+      "id": "6",
+      "name": "Telegram Approval",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        1450,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "workflowId": "wf_auditoria"
+      },
+      "id": "7",
+      "name": "Audit",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1,
+      "position": [
+        1450,
+        420
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook Zabbix": {
+      "main": [
+        [
+          {
+            "node": "Normalize Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Event": {
+      "main": [
+        [
+          {
+            "node": "Create Ticket",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Ticket": {
+      "main": [
+        [
+          {
+            "node": "AI Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Analysis": {
+      "main": [
+        [
+          {
+            "node": "Critical?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Critical?": {
+      "main": [
+        [
+          {
+            "node": "Telegram Approval",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Audit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

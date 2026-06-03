@@ -1,0 +1,71 @@
+{
+  "name": "wf_event_controller_graylog",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "graylog/event",
+        "httpMethod": "POST"
+      },
+      "id": "1",
+      "name": "Webhook Graylog",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        200,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{json:{source:'graylog',event:$json}}];"
+      },
+      "id": "2",
+      "name": "Normalize Graylog Event",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        450,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{$env.ZABBIX_URL}}",
+        "sendBody": true
+      },
+      "id": "3",
+      "name": "Create Zabbix Event",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        700,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook Graylog": {
+      "main": [
+        [
+          {
+            "node": "Normalize Graylog Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Graylog Event": {
+      "main": [
+        [
+          {
+            "node": "Create Zabbix Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
