@@ -1,0 +1,57 @@
+{
+  "name": "netwatch",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "9586fa9b-ce4e-4ca1-aa45-653718059657",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "command": "/tool/netwatch/print detail"
+      },
+      "type": "n8n-nodes-sshv2.hadidizAi",
+      "typeVersion": 1,
+      "position": [
+        272,
+        0
+      ],
+      "id": "45444356-fb41-4c8e-bb7a-309be3964fca",
+      "name": "Hadidiz-AI"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Hadidiz-AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "fae64a02-9cc4-4c0c-b771-65a4bc124da3",
+  "meta": {
+    "instanceId": "5d7cd8c0612c3c9f6b1aaad343a794c642582938ff7ecf165a06281225de139b"
+  },
+  "nodeGroups": [],
+  "id": "QrwHzbohPbnk52pE",
+  "tags": []
+}

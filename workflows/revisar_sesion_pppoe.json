@@ -1,0 +1,57 @@
+{
+  "name": "revisar_sesion_pppoe",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -208,
+        -32
+      ],
+      "id": "0eb7528d-b304-4447-817e-6368356b59f4",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "command": "/ppp active print detail where name=\"usuario\""
+      },
+      "type": "n8n-nodes-sshv2.hadidizAi",
+      "typeVersion": 1,
+      "position": [
+        32,
+        -32
+      ],
+      "id": "86f9a611-050f-49bc-bd3c-102b45797160",
+      "name": "Hadidiz-AI"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Hadidiz-AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "62256c21-848a-4f81-b8a8-51419e4790a0",
+  "meta": {
+    "instanceId": "5d7cd8c0612c3c9f6b1aaad343a794c642582938ff7ecf165a06281225de139b"
+  },
+  "nodeGroups": [],
+  "id": "hV9DbgcUiAbYK0UY",
+  "tags": []
+}

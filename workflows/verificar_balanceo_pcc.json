@@ -1,0 +1,57 @@
+{
+  "name": "verificar_balanceo_pcc",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "14e274d8-f307-4943-ac4d-05f3ff0bf30c",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "command": "/interface monitor-traffic [find] once"
+      },
+      "type": "n8n-nodes-sshv2.hadidizAi",
+      "typeVersion": 1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "6d12a419-0a02-4f51-a6ee-b8fb7fa6f216",
+      "name": "verificar_balanceo_pcc"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "verificar_balanceo_pcc",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "6f6ef7fc-f9c7-4435-b509-22793a7aca5c",
+  "meta": {
+    "instanceId": "5d7cd8c0612c3c9f6b1aaad343a794c642582938ff7ecf165a06281225de139b"
+  },
+  "nodeGroups": [],
+  "id": "his9YTwOkTN4nfZr",
+  "tags": []
+}

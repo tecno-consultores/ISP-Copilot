@@ -1,0 +1,178 @@
+{
+  "name": "ejecucion_automatica",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -544,
+        -48
+      ],
+      "id": "3411396f-f3da-47e6-a149-da36020112a1",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        -288,
+        -48
+      ],
+      "id": "9723bedd-b8c5-4e42-ae97-4d0e300bfea7",
+      "name": "Get many events",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "TzgaU3MbXjJfFNFY",
+          "name": "Google Calendar  sinfallas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "ca3a71b5-90d4-4663-be74-38fd5d94b744",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -80,
+        -48
+      ],
+      "id": "9378893f-07d2-4586-ab98-59f431c01e7c",
+      "name": "noc_disponible"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "Etd6jvkJ4uGL6rYj",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/Etd6jvkJ4uGL6rYj",
+          "cachedResultName": "diagnostico_noc_automatizado"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        336,
+        64
+      ],
+      "id": "d8f2b93d-694c-4ddd-a582-cf0ed0654082",
+      "name": "Call 'diagnostico_noc_automatizado'"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        336,
+        -128
+      ],
+      "id": "9873d273-6e11-4686-ae74-6b91cd966dfb",
+      "name": "No Operation, do nothing"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get many events",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many events": {
+      "main": [
+        [
+          {
+            "node": "noc_disponible",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "noc_disponible": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Call 'diagnostico_noc_automatizado'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "2a51e277-45c9-419f-af91-f9a74961acba",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "5d7cd8c0612c3c9f6b1aaad343a794c642582938ff7ecf165a06281225de139b"
+  },
+  "nodeGroups": [],
+  "id": "kDl0JptTe3SFfLBI",
+  "tags": []
+}

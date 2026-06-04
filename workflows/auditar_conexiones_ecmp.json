@@ -1,0 +1,57 @@
+{
+  "name": "auditar_conexiones_ecmp",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "edd27475-f74c-43fa-bfd6-28e6fe60b413",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "command": "/ip firewall connection print where connection-mark=\"...\""
+      },
+      "type": "n8n-nodes-sshv2.hadidizAi",
+      "typeVersion": 1,
+      "position": [
+        368,
+        0
+      ],
+      "id": "4e90bb52-d91e-4818-b1c7-f812c003ba9f",
+      "name": "Hadidiz-AI"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Hadidiz-AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "f4c16340-ad30-4a63-b3b6-38db32533f71",
+  "meta": {
+    "instanceId": "5d7cd8c0612c3c9f6b1aaad343a794c642582938ff7ecf165a06281225de139b"
+  },
+  "nodeGroups": [],
+  "id": "QMStIDiePJ8YEQAR",
+  "tags": []
+}

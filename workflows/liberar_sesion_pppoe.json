@@ -1,0 +1,57 @@
+{
+  "name": "liberar_sesion_pppoe",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        32,
+        0
+      ],
+      "id": "83237720-f9e0-4388-a5a6-8597873b96ee",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "command": "/ppp active remove [find name=\"usuario\"]"
+      },
+      "type": "n8n-nodes-sshv2.hadidizAi",
+      "typeVersion": 1,
+      "position": [
+        352,
+        0
+      ],
+      "id": "3ff4ce60-c881-439a-a393-1fd3eae7da33",
+      "name": "Hadidiz-AI"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Hadidiz-AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "8d808c3c-0592-4218-ac90-c5a06c85d058",
+  "meta": {
+    "instanceId": "5d7cd8c0612c3c9f6b1aaad343a794c642582938ff7ecf165a06281225de139b"
+  },
+  "nodeGroups": [],
+  "id": "KmJwvyfaUrWFb07T",
+  "tags": []
+}

@@ -1,0 +1,81 @@
+{
+  "name": "limpiar_mac_caller_id",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "db75b9b8-3e0d-433b-b33a-6c136ff2cbe4",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "command": "/ppp active remove [find name=\"usuario\"]"
+      },
+      "type": "n8n-nodes-sshv2.hadidizAi",
+      "typeVersion": 1,
+      "position": [
+        480,
+        0
+      ],
+      "id": "dfff8d90-aead-4539-90d9-a1587a3dc1ad",
+      "name": "Hadidiz-AI"
+    },
+    {
+      "parameters": {
+        "command": "/ppp secret set [find name=\"usuario\"] caller-id=\"\""
+      },
+      "type": "n8n-nodes-sshv2.hadidizAi",
+      "typeVersion": 1,
+      "position": [
+        240,
+        0
+      ],
+      "id": "d9f95faf-af31-4b97-b688-0052880b9208",
+      "name": "Hadidiz-AI1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Hadidiz-AI1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hadidiz-AI1": {
+      "main": [
+        [
+          {
+            "node": "Hadidiz-AI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "c686a8f6-6de2-4293-b825-0cc852115e87",
+  "meta": {
+    "instanceId": "5d7cd8c0612c3c9f6b1aaad343a794c642582938ff7ecf165a06281225de139b"
+  },
+  "nodeGroups": [],
+  "id": "b8N3DuwZrcmTcYCy",
+  "tags": []
+}

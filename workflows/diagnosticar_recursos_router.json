@@ -1,0 +1,111 @@
+{
+  "name": "diagnosticar_recursos_router",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        32,
+        -16
+      ],
+      "id": "5e89bd17-e410-4012-b1df-d9e16bd05b0f",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "command": "/system resource print"
+      },
+      "type": "n8n-nodes-sshv2.hadidizAi",
+      "typeVersion": 1,
+      "position": [
+        320,
+        144
+      ],
+      "id": "705e9985-86b1-403b-adb0-9fd3157eefc2",
+      "name": "resource"
+    },
+    {
+      "parameters": {
+        "command": "/system health print"
+      },
+      "type": "n8n-nodes-sshv2.hadidizAi",
+      "typeVersion": 1,
+      "position": [
+        320,
+        -160
+      ],
+      "id": "db823461-6f52-4879-8b4f-b562cfb9d27e",
+      "name": "health"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        592,
+        0
+      ],
+      "id": "a35620ea-6bc4-4ad9-9bfb-8ded1b84dd4c",
+      "name": "Aggregate"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "health",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "resource",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "health": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "resource": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "07d0be91-f528-4af0-8971-c638799f25bf",
+  "meta": {
+    "instanceId": "5d7cd8c0612c3c9f6b1aaad343a794c642582938ff7ecf165a06281225de139b"
+  },
+  "nodeGroups": [],
+  "id": "xNRX2beiatTVpoTe",
+  "tags": []
+}

@@ -1,0 +1,1039 @@
+{
+  "name": "clientes_whats_soporte",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "83b79818-c969-4644-957b-64ebe7474177",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -1120,
+        16
+      ],
+      "id": "d85bd173-4693-4bf6-ac96-5cd3046307d3",
+      "name": "Webhook",
+      "webhookId": "83b79818-c969-4644-957b-64ebe7474177"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Alerta de Zabbix detectada. Procesa el siguiente payload JSON según tus instrucciones de ingeniería de NOC:\n{{ JSON.stringify($json.body) }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=# SYSTEM PROMPT: ISP-Copilot NOC Automation Agent (Tier 1/2)\n\n## 1. IDENTITY & ROLE\nYou are \"ISP-Copilot\", an advanced Core Network Operations Center (NOC) automation AI agent. Your mission is to analyze incoming JSON payloads from Zabbix server alerts, correlate them with past telemetry in your Redis memory, and use your interactive SSH tool to run live diagnostics or remediations on network devices before generating a final structured verdict.\n\n## 2. OPERATIONAL ENVIRONMENT & LIVE INTERACTION (REACT FRAMEWORK)\nYou operate in a high-performance ISP environment. When a Zabbix alert arrives, you must NOT assume or guess the current state. You are equipped with an SSH tool (`ejecutar_comando_mikrotik`) to actively query the infrastructure.\n- **Topologies:** MikroTik RouterOS (PCC/ECMP load balancing on RB4011, BGP peers, OSPF, Core switches), GPON/EPON OLTs (Huawei, ZTE, Fiberhome), PPPoE servers, and CGNAT blocks.\n- **Execution Loop:** Upon receiving an alert, immediately evaluate if running a live command (e.g., `/interface print`, `/ping`, `/ip route print`, `/user active print`) will provide critical visibility. Execute the tool, analyze the terminal output, and iterate if necessary before filling the final JSON schema.\n\n## 3. MEMORY CONTEXTUALIZATION (REDIS INTERACTION)\nYou have a persistent chat/event memory mapped per host device. Use it to check if this alert is isolated or part of a continuous pattern:\n- **Flapping Mitigation:** If memory shows the same interface or host has been going UP and DOWN repeatedly in the last few minutes, do NOT attempt automated port flaps or interface resets via your SSH tool. Stop automatic execution and escalate to Category B immediately as a suspected physical layer issue (fiber macro-bend, bad connector, or power instability).\n- **Incident Progression:** If a device previously reported high CPU/Memory and now reports \"Host Unavailable\", correlate them to validate that the host crashed under load.\n\n## 4. INCIDENT CLASSIFICATION & ACTION PROTOCOL\nAfter interacting with the live device via your tool (if needed) and reading the Redis logs, you must classify the outcome into exactly one of three categories:\n\n### CATEGORY A: Automated Diagnosis / Remediation Executed\nApply this if the device was reachable and you successfully executed commands via your SSH tool to either gather advanced troubleshooting data or mitigate a known soft-failure.\n- *Examples:* You successfully cleared a hung PPPoE session, verified routing tables after a flapping route, or ran a live ping test from the core router to isolate a gateway.\n- *Action:* Set `tool_ssh_ejecutada: true`. In the JSON response, detail what you discovered and what actions you executed on the CLI.\n\n### CATEGORY B: Human NOC Escalation (High Impact / Physical Failures)\nApply this if the device is completely down/unreachable via SSH, if critical infrastructure core protocols are broken (BGP down, OLT uplink down), or if your Redis memory flags a critical flapping condition.\n- *Examples:* Backbone fiber cuts, power failures, or devices that reject SSH connections during a critical status change.\n- *Action:* Set `tool_ssh_ejecutada: false` (or true if it failed/timeout) and generate a concise technical summary optimized for network engineers.\n\n### CATEGORY C: Tier 1 Customer Care / Fiber Access Support\nApply this if your analysis (via Zabbix data or OLT queries) confirms the issue only affects isolated end-users, residential ONUs, or local Wi-Fi, without compromising core routing.\n- *Examples:* Individual ONT RX optical power out of range (e.g., < -27 dBm) or local customer wireless interference.\n- *Action:* Set `tool_ssh_ejecutada: false` and generate a ticket/notification summary optimized for helpdesk agents or the end customer.\n\n### ⚠️ CRITICAL CLASSIFICATION RULES (NEVER VIOLATE):\n1. **Physical Layer Isolation:** If your live SSH diagnostic or the Zabbix alert suggests a physical failure (e.g., link down, cable disconnected, \"no carrier\", hardware fault, bad fiber optics power), you must NEVER classify it as Category A. Physical issues cannot be fixed with software. Route it to **Category B (escalamiento)** immediately.\n2. **Diagnostic vs. Action:** Running a command just to \"see\" (like `/interface print`) without altering or mitigating the state does NOT count as Category A. If you cannot fix or clear the error autonomously with a decisive command, it is Category B.\n3. **Data Integrity Constraints:** - If `categoria_accion` is 'A' or 'B', `ticket_cliente` MUST be strictly `null`. Never send technical internal port alerts (like ether6 down) to end-users.\n   - If `categoria_accion` is 'B' or 'C', `tool_ssh_ejecutada` can be true or false (depending on whether you managed to check), but `registro_comandos_ejecutados` must never contain software-fix actions if the node is dead.\n\n## 5. RESPONSE CONSTRAINT (STRICT JSON OUTPUT)\nYou must ALWAYS respond with a single, valid JSON object. Do not include any conversational text, markdown outside the code block, or preambles. Your response must match this schema exactly:\n\n{\n  \"diagnostico_ia\": \"A rigorous engineering explanation of the root cause, incorporating the live data returned by your SSH tool and historical Redis patterns.\",\n  \"categoria_accion\": \"A\",\n  \"tool_ssh_ejecutada\": true,\n  \"registro_comandos_ejecutados\": \"Executed '/interface ethernet print' on Core-RB4011. Found ether3 link down. Attempted clear, interface remained down.\",\n  \"notificacion_noc\": \"🔴 **[CORE ALERT]** Host: Core-MikroTik-RB4011 | Issue: Interface ether3 Down | Live Status: Checked via SSH, physical link failure suspected.\",\n  \"ticket_cliente\": null\n}\n\nIf `tool_ssh_ejecutada` is false, `registro_comandos_ejecutados` must be strictly null. If `categoria_accion` is not 'C', `ticket_cliente` must be strictly null.\n\n## 6. CONTEXTUAL ACCURACY & ANTI-HALLUCINATION RULES\n1. **Never Inventory Guess:** You do not know the network topology by heart. You MUST strictly read the `trigger_description` and `item_name` fields from the Zabbix JSON to understand what is physically connected to the port (e.g., if it says it is a Server, do NOT invent that it is a Switch).\n2. **Strict Null Enforcement:** If `categoria_accion` is 'B', the field `ticket_cliente` MUST be `null`. No exceptions. You are forbidden from writing messages to end-users if the issue is a core infrastructure or server escalation.\n3. **Tool Logic for Category B:** If you classify an event as 'B' (Escalation), `comando_sugerido` or any active remediation step is useless because a human must go to the site. Keep it focused on the diagnostic report.\n4. **Knowledge Base Usage (Qdrant):** You have access to a Qdrant vector database containing official MikroTik RouterOS manuals, ISP procedures, and engineering guides. When diagnosing an issue (Category A or B), use the retrieved context from Qdrant to formulate the exact CLI syntax and engineering root cause. Do NOT invent RouterOS commands; trust the official documentation retrieved from your knowledge base.",
+          "maxIterations": 50
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -112,
+        16
+      ],
+      "id": "f18a5b21-1909-4b3b-ab9f-b24e6f0cffe8",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.body.event_id }}",
+        "sessionTTL": 3600,
+        "contextWindowLength": 20
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryRedisChat",
+      "typeVersion": 1.6,
+      "position": [
+        -400,
+        528
+      ],
+      "id": "296b9ead-95ef-42a1-8558-a166385bbc46",
+      "name": "Redis Chat Memory"
+    },
+    {
+      "parameters": {
+        "model": "hermes3:8b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        -592,
+        528
+      ],
+      "id": "9c13bb3b-5dc0-4221-9e1a-5f217d7ec4a3",
+      "name": "Ollama Chat Model"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.output.categoria_accion }}",
+                    "rightValue": "A",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "79258228-19cf-45b4-87ff-d0033f0c204f"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "diagnostico"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "c17f257a-b571-4dc4-bdc3-817d4156079b",
+                    "leftValue": "={{ $json.output.categoria_accion }}",
+                    "rightValue": "B",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "escalamiento"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "053cc3ae-01cb-452d-8696-10fcffba96bd",
+                    "leftValue": "={{ $json.output.categoria_accion }}",
+                    "rightValue": "C",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "cliente"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        0
+      ],
+      "id": "65608fc0-95f3-4373-a2d7-86dab99ad952",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"diagnostico_ia\": {\n      \"type\": \"string\",\n      \"description\": \"Explicación técnica detallada y concisa de la causa raíz de la falla del ISP.\"\n    },\n    \"categoria_accion\": {\n      \"type\": \"string\",\n      \"enum\": [\"A\", \"B\", \"C\"],\n      \"description\": \"Clasificación del incidente: A para auto-recuperación por SSH, B para escalamiento crítico al NOC, C para atención al cliente/Tier 1.\"\n    },\n    \"requiere_ssh\": {\n      \"type\": \"boolean\",\n      \"description\": \"Verdadero si se necesita ejecutar un comando de diagnóstico o mitigación en el equipo afectado.\"\n    },\n    \"comando_sugerido\": {\n      \"type\": \"string\",\n      \"description\": \"Comando exacto de RouterOS o CLI aplicable si requiere_ssh es true. De lo contrario, dejar como string vacío o null.\"\n    },\n    \"notificacion_noc\": {\n      \"type\": \"string\",\n      \"description\": \"Mensaje formateado en Markdown listo para enviar al canal de alertas de los ingenieros del NOC.\"\n    },\n    \"ticket_cliente\": {\n      \"type\": \"string\",\n      \"description\": \"Mensaje de texto amigable o estructurado para el helpdesk/cliente final si la categoría es C. De lo contrario, dejar vacío.\"\n    }\n  },\n  \"required\": [\n    \"diagnostico_ia\",\n    \"categoria_accion\",\n    \"requiere_ssh\",\n    \"comando_sugerido\",\n    \"notificacion_noc\",\n    \"ticket_cliente\"\n  ]\n}",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -736,
+        240
+      ],
+      "id": "3877428c-25a0-4407-b4e7-27a200df4e58",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Use this tool IMMEDIATELY after receiving a Zabbix alert for any interface down, port flapping, or connectivity issue. This tool queries the ISP's physical inventory database to determine the exact topology.\n\nYou MUST provide two inputs based on the Zabbix JSON payload:\n1. 'host_name': The exact name of the equipment (e.g., from {HOST.NAME}).\n2. 'interface_name': The exact name of the affected port (e.g., from the trigger name or item, like 'ether6' or 'sfp1').\n\nThe tool will return the physical context of the port, including what device is connected to the other end ('connected_device_name'), the port's role ('interface_role'), its criticality ('criticidad'), and crucially, a boolean flag ('auto_remediation_allowed'). You MUST read this flag: if it is false, you are STRICTLY FORBIDDEN from running any mitigation commands on that port via SSH, and must escalate to Category B.",
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "wDW7diaOXLnEw8OA",
+          "mode": "list",
+          "cachedResultName": "inventario",
+          "cachedResultUrl": "/projects/ZXPsgeTxhB8igXrb/datatables/wDW7diaOXLnEw8OA"
+        },
+        "returnAll": true
+      },
+      "type": "n8n-nodes-base.dataTableTool",
+      "typeVersion": 1.1,
+      "position": [
+        880,
+        336
+      ],
+      "id": "2641cda4-0314-4e1d-bb05-067857223da4",
+      "name": "consultar_inventario_isp"
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Call this tool every time a user asks you something related to:\n- git\n- Devops\n- Continuous Integration and Continuous Delivery\n- deployments\n- Agile Development\n- Continuous Monitoring\n- Version Control\n- System modeling\n- Software Design\n- Software Design Patterns\n- software development\n- Best practices in programming\n- Web development\n- itil\n- debian\n- ubuntu\n- linux\n- linux firewall\n- linux security\n- linux hardening\n- linux networking\n- linux commands\n- iproute2\n- forensics\n- digital forensics\n- computer forensics\n- searching, analyzing, acquiring, and securing digital evidence\n- OSINT TECHNIQUES\n- malware forensics\n- penetration testing\n- advanced persistent threat hacking\n- exploitation\n- collecting, examining, and preserving evidence of computer crimes.\n- BEST PRACTICES FOR THE PROTECTION AND RESILIENCE OF NETWORK AND INFORMATION SYSTEMS\n- aws security incident response guide\n- aws\n- ec2\n- vpc\n- iam\n- awscli\n- lightsail\n- s3\n- cloudfront\n- route53\n- ebs\n- efs\n- emr\n- ecr\n- ekr\n- zabbix\n- zabbix agent\n- zabbix dashboard\n- zabbix snmp\n- zabbix proxy\n- bash\n- scripting\n- Mikrotik\n- RouterOS\n- Router OS\n- ros\n- RouterBOARD\n- RB\n- BGP\n- iBGP\n- eBGP\n- ospf\n- mpls\n- wireguard\n- Switching\n- MTU\n- VLAN\n- MAC-based VLAN\n- STP\n- RSTP\n- MSTP\n- L2\n- Layer 2\n- IGMP\n- ARP\n- Port Security\n- 802.1x\n- LAG\n- L7-filter\n- QoS\n- networking\n- osi model\n- Python\n- FastAPI\n- microservices with FastAPI\n- python and large language models\n- time series forecasting with python\n- Windows\n- Windows server\n- Windows services\n- Proxmox\n- QEMU\n- KVM\n- LXC\n- virtualization\n- virtual machines\n- ansible\n- semaphore\n- playbooks\n- inventory\n- ansible for devops\n- Asterisk\n- voip\n- sip\n- iax\n- pbx\n- voip trunks\n\nSearches in this vector store must be done in English.",
+        "qdrantCollection": {
+          "__rl": true,
+          "value": "unificado",
+          "mode": "list",
+          "cachedResultName": "unificado"
+        },
+        "topK": 20,
+        "useReranker": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreQdrant",
+      "typeVersion": 1.3,
+      "position": [
+        1264,
+        320
+      ],
+      "id": "dc720760-7d6b-4a60-bfbd-632a7bbc599c",
+      "name": "Qdrant Vector Store"
+    },
+    {
+      "parameters": {
+        "model": "nomic-embed-text-v2-moe:latest"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOllama",
+      "typeVersion": 1,
+      "position": [
+        1216,
+        480
+      ],
+      "id": "b59843ad-1895-4983-8a12-6aa285971f8d",
+      "name": "Embeddings Ollama"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.rerankerCohere",
+      "typeVersion": 1,
+      "position": [
+        1408,
+        480
+      ],
+      "id": "f28eb128-7d98-492b-954b-a7b2ff13348c",
+      "name": "Reranker Cohere"
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -592,
+        16
+      ],
+      "id": "be57402a-6acd-4746-a874-b96ccef20649",
+      "name": "crear_ticket",
+      "credentials": {
+        "postgres": {
+          "id": "mjou9SnujrXqgTBc",
+          "name": "Postgres account  sinfallas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -384,
+        16
+      ],
+      "id": "1f96fe69-536d-42b4-9f40-32b2c04f8e7d",
+      "name": "revisar_facturacion",
+      "credentials": {
+        "postgres": {
+          "id": "mjou9SnujrXqgTBc",
+          "name": "Postgres account  sinfallas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -832,
+        16
+      ],
+      "id": "65ddfc8d-cae1-42b3-a56d-e0ea648bd540",
+      "name": "datos_del_cliente",
+      "credentials": {
+        "postgres": {
+          "id": "mjou9SnujrXqgTBc",
+          "name": "Postgres account  sinfallas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        }
+      },
+      "type": "n8n-nodes-base.postgresTool",
+      "typeVersion": 2.6,
+      "position": [
+        1328,
+        656
+      ],
+      "id": "f4a5fd0c-5574-40c8-84ce-a2f64a00d36d",
+      "name": "revisar_falla_duplicada",
+      "credentials": {
+        "postgres": {
+          "id": "mjou9SnujrXqgTBc",
+          "name": "Postgres account  sinfallas"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Revisa si los peers de BGP están establecidos y cuántas rutas están recibiendo.",
+        "workflowId": {
+          "__rl": true,
+          "value": "qFmbTKt8IDKOaoFO",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/qFmbTKt8IDKOaoFO",
+          "cachedResultName": "consultar_estado_bgp"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        720,
+        704
+      ],
+      "id": "644e4d42-e8d8-4cfe-88d6-dddb8ea5f0f1",
+      "name": "consultar_estado_bgp"
+    },
+    {
+      "parameters": {
+        "description": "Revisa el tráfico actual en las interfaces WAN que participan en el ECMP/PCC para confirmar que el tráfico se está distribuyendo equitativamente.",
+        "workflowId": {
+          "__rl": true,
+          "value": "his9YTwOkTN4nfZr",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/his9YTwOkTN4nfZr",
+          "cachedResultName": "verificar_balanceo_pcc"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        544,
+        704
+      ],
+      "id": "f8ae4032-49f9-4711-941e-0cb5ab2d7057",
+      "name": "verificar_balanceo_pcc"
+    },
+    {
+      "parameters": {
+        "description": "Ideal para cuando Zabbix alerta sobre lentitud. Revisa CPU, memoria, temperatura y voltaje del equipo.",
+        "workflowId": {
+          "__rl": true,
+          "value": "xNRX2beiatTVpoTe",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/xNRX2beiatTVpoTe",
+          "cachedResultName": "diagnosticar_recursos_router"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        720,
+        880
+      ],
+      "id": "ba96e16a-c0c6-40b5-b421-061b51a8f0e9",
+      "name": "diagnosticar_recursos_router"
+    },
+    {
+      "parameters": {
+        "description": "Busca a un cliente por su nombre de usuario para ver si está conectado, su IP asignada, su tiempo en línea y su consumo actual de ancho de banda.",
+        "workflowId": {
+          "__rl": true,
+          "value": "hV9DbgcUiAbYK0UY",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/hV9DbgcUiAbYK0UY",
+          "cachedResultName": "revisar_sesion_pppoe"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        544,
+        880
+      ],
+      "id": "189d02b2-f8ad-4d2a-9351-0df0126bc0e9",
+      "name": "revisar_sesion_pppoe"
+    },
+    {
+      "parameters": {
+        "description": "Se conecta a la OLT (Huawei/ZTE) y extrae los valores de Rx y Tx de una ONU específica. Fundamental para descartar cortes de fibra física en la casa del cliente.",
+        "workflowId": {
+          "__rl": true,
+          "value": "T1VezovZBSB6cXmg",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/T1VezovZBSB6cXmg",
+          "cachedResultName": "consultar_potencia_optica_ont"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        912,
+        704
+      ],
+      "id": "1b68beb6-b956-4242-a2a6-62d27c9bb892",
+      "name": "consultar_potencia_optica_ont"
+    },
+    {
+      "parameters": {
+        "description": "Consulta los pools de IPs públicas para ver si hay escasez de puertos o IPs disponibles para la salida a internet de los clientes.",
+        "workflowId": {
+          "__rl": true,
+          "value": "o9glVw0zvxamQit0",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/o9glVw0zvxamQit0",
+          "cachedResultName": "verificar_agotamiento_cgnat"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        912,
+        880
+      ],
+      "id": "abeff6ff-0471-4f51-aac7-fc4ab9311709",
+      "name": "verificar_agotamiento_cgnat"
+    },
+    {
+      "parameters": {
+        "description": "Desconecta a un usuario que se quedó \"colgado\" (sesión fantasma) para forzar que su router vuelva a autenticar.",
+        "workflowId": {
+          "__rl": true,
+          "value": "KmJwvyfaUrWFb07T",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/KmJwvyfaUrWFb07T",
+          "cachedResultName": "liberar_sesion_pppoe"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        544,
+        1072
+      ],
+      "id": "6a015ffd-eafe-4c62-873c-2a607c2db4e7",
+      "name": "liberar_sesion_pppoe"
+    },
+    {
+      "parameters": {
+        "description": "Apaga y enciende la energía de un puerto específico (Power-Cycle) para reiniciar antenas o switches de torre bloqueados.",
+        "workflowId": {
+          "__rl": true,
+          "value": "4TTdYeFB8uX8gOiU",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/4TTdYeFB8uX8gOiU",
+          "cachedResultName": "reiniciar_puerto_poe"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        720,
+        1072
+      ],
+      "id": "7ebee1b3-c6d9-4801-8c94-67113bee305e",
+      "name": "reiniciar_puerto_poe"
+    },
+    {
+      "parameters": {
+        "description": "para que el bot pueda verificar si las sesiones están siendo marcadas y distribuidas correctamente a través de los enlaces disponibles.",
+        "workflowId": {
+          "__rl": true,
+          "value": "QMStIDiePJ8YEQAR",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/QMStIDiePJ8YEQAR",
+          "cachedResultName": "auditar_conexiones_ecmp"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        928,
+        1072
+      ],
+      "id": "f29e4ff9-a7a1-4f5f-916f-393369c19f41",
+      "name": "auditar_conexiones_ecmp"
+    },
+    {
+      "parameters": {
+        "description": "Elimina la asociación de la dirección MAC (Caller-ID) en el perfil PPPoE del usuario. Esencial para permitir que un cliente se conecte exitosamente después de haber cambiado su router WiFi físico, evitando el error de \"MAC mismatch\".",
+        "workflowId": {
+          "__rl": true,
+          "value": "b8N3DuwZrcmTcYCy",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/b8N3DuwZrcmTcYCy",
+          "cachedResultName": "limpiar_mac_caller_id"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        1104,
+        704
+      ],
+      "id": "8c57781f-21db-41f1-86e0-c8297dfd023b",
+      "name": "limpiar_mac_caller_id"
+    },
+    {
+      "parameters": {
+        "description": "para ver el estado de los netwatch",
+        "workflowId": {
+          "__rl": true,
+          "value": "QrwHzbohPbnk52pE",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/QrwHzbohPbnk52pE",
+          "cachedResultName": "netwatch"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        1104,
+        896
+      ],
+      "id": "c6a1f6ae-e920-4ffd-ad1a-2f89d51f3e2e",
+      "name": "netwatch"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        944,
+        80
+      ],
+      "id": "659e7ebc-7eec-47f1-a382-4ef4b69d4d76",
+      "name": "Enviar texto"
+    },
+    {
+      "parameters": {
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        944,
+        -80
+      ],
+      "id": "35a66a9c-9fe6-48e7-9fb7-c2ebce4565c2",
+      "name": "Send a text message",
+      "webhookId": "86e50268-ca76-4eac-b585-6785b3d4c367",
+      "credentials": {
+        "telegramApi": {
+          "id": "t3E8kpGD9O0qa3ct",
+          "name": "Telegram 7d9"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        944,
+        -240
+      ],
+      "id": "72a9d37b-cd17-4c8b-a012-981972061a04",
+      "name": "Insert rows in a table",
+      "credentials": {
+        "postgres": {
+          "id": "mjou9SnujrXqgTBc",
+          "name": "Postgres account  sinfallas"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "datos_del_cliente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Structured Output Parser",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "consultar_inventario_isp": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Qdrant Vector Store": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Ollama": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Qdrant Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reranker Cohere": {
+      "ai_reranker": [
+        [
+          {
+            "node": "Qdrant Vector Store",
+            "type": "ai_reranker",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "crear_ticket": {
+      "main": [
+        [
+          {
+            "node": "revisar_facturacion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "revisar_facturacion": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "datos_del_cliente": {
+      "main": [
+        [
+          {
+            "node": "crear_ticket",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "revisar_falla_duplicada": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "consultar_estado_bgp": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "verificar_balanceo_pcc": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "diagnosticar_recursos_router": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "revisar_sesion_pppoe": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "consultar_potencia_optica_ont": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "verificar_agotamiento_cgnat": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "liberar_sesion_pppoe": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "reiniciar_puerto_poe": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "auditar_conexiones_ecmp": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "limpiar_mac_caller_id": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "netwatch": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Insert rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Enviar texto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "cfd62011-2b75-4771-9709-b0456d8cbfac",
+  "meta": {
+    "instanceId": "5d7cd8c0612c3c9f6b1aaad343a794c642582938ff7ecf165a06281225de139b"
+  },
+  "nodeGroups": [],
+  "id": "flAFAb5k4H2cjHNM",
+  "tags": []
+}

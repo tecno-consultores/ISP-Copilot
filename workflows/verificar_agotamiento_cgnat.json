@@ -1,0 +1,169 @@
+{
+  "name": "verificar_agotamiento_cgnat",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -400,
+        0
+      ],
+      "id": "0ac264b7-e7ef-4565-9d28-95d6a40332ce",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "command": "/ip/firewall/connection/print count-only"
+      },
+      "type": "n8n-nodes-sshv2.hadidizAi",
+      "typeVersion": 1,
+      "position": [
+        48,
+        -288
+      ],
+      "id": "db9f53fb-f25a-4112-9b23-c098e4da8b4f",
+      "name": "cantidad de conexiones"
+    },
+    {
+      "parameters": {
+        "command": "/ip/firewall/connection/tracking/print"
+      },
+      "type": "n8n-nodes-sshv2.hadidizAi",
+      "typeVersion": 1,
+      "position": [
+        48,
+        -64
+      ],
+      "id": "f204805e-5157-4027-ae44-2844329bebbb",
+      "name": "tracking"
+    },
+    {
+      "parameters": {
+        "command": "/ip/firewall/nat/print detail"
+      },
+      "type": "n8n-nodes-sshv2.hadidizAi",
+      "typeVersion": 1,
+      "position": [
+        48,
+        160
+      ],
+      "id": "92e4a4c0-eaf7-4aaf-8361-cfc2ba3be271",
+      "name": "cantidad de conexiones por ip publica"
+    },
+    {
+      "parameters": {
+        "command": "/ip/pool/print detail"
+      },
+      "type": "n8n-nodes-sshv2.hadidizAi",
+      "typeVersion": 1,
+      "position": [
+        48,
+        384
+      ],
+      "id": "37759ba9-9047-4126-8f8c-3ea18867c419",
+      "name": "revisar pool publico"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        400,
+        32
+      ],
+      "id": "b66e394b-2bfc-4862-a7c7-8fe80b080c44",
+      "name": "Aggregate"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "cantidad de conexiones",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "tracking",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "cantidad de conexiones por ip publica",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "revisar pool publico",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "cantidad de conexiones": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "tracking": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "cantidad de conexiones por ip publica": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "revisar pool publico": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "02e8370b-323e-4ece-ab1b-d9927bdb2950",
+  "meta": {
+    "instanceId": "5d7cd8c0612c3c9f6b1aaad343a794c642582938ff7ecf165a06281225de139b"
+  },
+  "nodeGroups": [],
+  "id": "o9glVw0zvxamQit0",
+  "tags": []
+}
