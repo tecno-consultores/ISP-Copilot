@@ -1,5 +1,10 @@
 # 🚀 ISP-Copilot
 
+## ACLARACION:
+
+* ISP-Copilot contiene plantillas (workflow) que deben ser adaptados a las necesidades de cada ISP y en muchos casos solo se incluyen placeholders (marcadores de posicion) para ser sustituidos por el correspondiente al sistema que posee el ISP, por ejemplo un sistema de ERP o contable.
+* No se incluye ningun snapshot de qdrant ya que violaria la licencia de los pdf incluidos, si quieres contribuir al proyecto por favor no incluyas esta clase de archivos.
+
 ISP-Copilot es un ecosistema NetDevOps diseñado para automatizar y facilitar la gestión operativa de un Proveedor de Servicios de Internet (ISP). Actúa como un agente inteligente de triage, soporte y mantenimiento, integrando sistemas de monitoreo, bases de conocimiento y canales de comunicación.
 
 ## 🏗️ Arquitectura del Sistema
