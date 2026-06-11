@@ -1,0 +1,28 @@
+services:
+  watchtower:
+    image: nickfedor/watchtower:latest
+    pull_policy: always
+    container_name: watchtower
+    restart: always
+    environment:
+      WATCHTOWER_SCHEDULE: "0 6 * * *"
+      WATCHTOWER_CLEANUP: true
+      WATCHTOWER_REMOVE_VOLUMES: false
+      WATCHTOWER_INCLUDE_RESTARTING: true
+      WATCHTOWER_NOTIFICATIONS: email
+      WATCHTOWER_NOTIFICATION_EMAIL_FROM: "user@example.com"
+      WATCHTOWER_NOTIFICATION_EMAIL_TO: "user@example.com"
+      WATCHTOWER_NOTIFICATION_EMAIL_SERVER: "smtp.example.com"
+      WATCHTOWER_NOTIFICATION_EMAIL_SERVER_USER: "user@example.com"
+      WATCHTOWER_NOTIFICATION_EMAIL_SERVER_PASSWORD: "examplepassword"
+      WATCHTOWER_NOTIFICATION_EMAIL_SERVER_PORT: "587"
+      WATCHTOWER_NOTIFICATION_EMAIL_DELAY: 2
+      WATCHTOWER_NOTIFICATIONS_HOSTNAME: "exmaple"
+      WATCHTOWER_NO_STARTUP_MESSAGE: false
+      WATCHTOWER_TIMEOUT: 30s
+      WATCHTOWER_WARN_ON_HEAD_FAILURE: never
+      WATCHTOWER_ROLLING_RESTART: true
+      TZ: America/Caracas
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/localtime:/etc/localtime:ro
