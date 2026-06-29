@@ -314,7 +314,7 @@ services:
       mode: global
     environment:
       - ZBX_HOSTNAME=agente
-      - ZBX_SERVER_HOST=zabbix-server
+      - ZBX_SERVER_HOST=192.168.1.1 #change me
       - ZBX_PASSIVE_ALLOW=true
       - ZBX_PASSIVESERVERS=zabbix-server
       - ZBX_ACTIVE_ALLOW=true
