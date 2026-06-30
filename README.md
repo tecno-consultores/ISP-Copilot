@@ -83,4 +83,4 @@ El repositorio está dividido en módulos independientes:
 
 Este proyecto está bajo la Licencia MIT - mira el archivo [LICENSE](LICENSE) para detalles.
 
-[![Star History Chart](https://api.star-history.com/svg?repos=tecno-consultores/llm-lab&type=Date)](https://www.star-history.com/#tecno-consultores/ISP-Copilot&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=tecno-consultores/ISP-Copilot&type=Date)](https://www.star-history.com/#tecno-consultores/ISP-Copilot&Date)
