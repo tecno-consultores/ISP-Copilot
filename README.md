@@ -8,7 +8,7 @@
 ISP-Copilot es un ecosistema NetDevOps diseñado para automatizar y facilitar la gestión operativa de un Proveedor de Servicios de Internet (ISP). Actúa como un agente inteligente de triage, soporte y mantenimiento, integrando sistemas de monitoreo, bases de conocimiento y canales de comunicación.
 
 * Repositorio de la presentacion del proyecto: https://github.com/tecno-consultores/Soporte-tecnico-24-7-sin-humanos
-* Video de la presentacion del proyecto: https://www.youtube.com/watch?v=BHKMhNaxniM
+* Video de la presentacion del proyecto en la ExpoISP 2026: https://www.youtube.com/watch?v=BHKMhNaxniM
 
 ## 🏗️ Arquitectura del Sistema
 
