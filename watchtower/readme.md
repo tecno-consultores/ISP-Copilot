@@ -5,3 +5,5 @@ Es un paquete que permite automatizar la actualizacion de imagenes de Docker, pa
 ```bash
 docker compose -f docker-compose.yml up -d
 ```
+
+Repositorio oficial: https://github.com/containrrr/watchtower
