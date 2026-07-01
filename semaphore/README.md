@@ -7,3 +7,5 @@ Instalador de semaphore mediante docker.
 ```bash
 docker compose -f docker-compose.yml up -d
 ```
+
+Repositorio oficial: https://github.com/semaphoreui/semaphore
