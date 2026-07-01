@@ -30,3 +30,5 @@ Otros perfiles que puede correr:
 | Searxng | 8181 | http://127.0.0.1:8181 |
 | EvolutionAPI | 9191 | http://127.0.0.1:9191/manager |
 | Redis Insight | 8001 | http://127.0.0.1:8001 |
+
+Repositorio oficial: https://github.com/n8n-io/n8n
