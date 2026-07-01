@@ -19,3 +19,5 @@ Default user: **Admin**
 Default password: **zabbix**
 
 Probado en AMD64 y ARM64
+
+Repositorio oficial: https://github.com/zabbix/zabbix
