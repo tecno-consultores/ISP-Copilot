@@ -1,4 +1,108 @@
-* commit f0526df054371ccf9f03313cbdd45b3e9e748456 (HEAD -> main, origin/main, origin/HEAD)
+* commit 5e449bfe3dffa5562071a0ffff052ab39f9ed30a (HEAD -> main, origin/main, origin/HEAD)
+| Author: Jesus Palencia <sinfallas@gmail.com>
+| Date:   Thu Jul 2 19:35:22 2026 -0400
+| 
+|     * bugfix
+| 
+* commit 768e1fc697a328bf728df7a54de4b258fed0fb90
+| Author: Sinfallas <sinfallas@yahoo.com>
+| Date:   Thu Jul 2 09:04:30 2026 -0400
+| 
+|     Update Zabbix Media Type para n8n.md
+| 
+* commit 0d74e45be8d8cb2134adf00aa0e7dd524f1424cb
+| Author: Sinfallas <sinfallas@yahoo.com>
+| Date:   Thu Jul 2 09:03:49 2026 -0400
+| 
+|     Update actions.md
+| 
+* commit 726c18a4b4464cb868031bfbf5805253bf5709d1
+| Author: Sinfallas <sinfallas@yahoo.com>
+| Date:   Wed Jul 1 10:39:03 2026 -0400
+| 
+|     Update README.md
+| 
+* commit 375b63fc0fee3d75853edd4922bdc67e7b362929
+| Author: Sinfallas <sinfallas@yahoo.com>
+| Date:   Wed Jul 1 10:37:41 2026 -0400
+| 
+|     Update README with project presentation links
+|     
+|     Added project presentation repository and video links to README.
+| 
+* commit 8adb12cf0250b3a2da8be06e679750b2c00440bb
+| Author: Sinfallas <sinfallas@yahoo.com>
+| Date:   Wed Jul 1 10:35:26 2026 -0400
+| 
+|     Add official repository link to README
+| 
+* commit 4d1e0a246882d9f830d3f4eb1740c7d2370ccba7
+| Author: Sinfallas <sinfallas@yahoo.com>
+| Date:   Wed Jul 1 10:34:38 2026 -0400
+| 
+|     Add official repository link to README
+|     
+|     Added official repository link to README.
+| 
+* commit 7a8a5d6f427a2fadfe2f162c8638e7fe2de4bc28
+| Author: Sinfallas <sinfallas@yahoo.com>
+| Date:   Wed Jul 1 10:33:57 2026 -0400
+| 
+|     Update README.md
+| 
+* commit 3b014c1088147f5c26a489408ec1afe771a82b37
+| Author: Sinfallas <sinfallas@yahoo.com>
+| Date:   Wed Jul 1 10:31:54 2026 -0400
+| 
+|     Update readme.md
+| 
+* commit 202aaad6dcfa06983623ae4aa72bc4d443a19faf
+| Author: Sinfallas <sinfallas@yahoo.com>
+| Date:   Wed Jul 1 10:30:55 2026 -0400
+| 
+|     Update README with official repository link
+|     
+|     Added official repository link to the README.
+| 
+* commit 0f2e4bce2dab6b757a9f8a72816b4e828878bf04
+| Author: Sinfallas <sinfallas@yahoo.com>
+| Date:   Wed Jul 1 10:29:45 2026 -0400
+| 
+|     Create README for watchtower package
+|     
+|     Added basic usage instructions for the watchtower package.
+| 
+* commit 21bfd76cd88f1bbdd3fdbe1deb47f7ff0f219eb7
+| Author: Sinfallas <sinfallas@yahoo.com>
+| Date:   Tue Jun 30 15:02:05 2026 -0400
+| 
+|     Fix link in Star History Chart in README
+| 
+* commit c1d4e035a36e12fc6dda63a5b9e717f0540d75c5
+| Author: Sinfallas <sinfallas@yahoo.com>
+| Date:   Tue Jun 30 15:01:15 2026 -0400
+| 
+|     Add star history chart to README
+| 
+* commit 56205fdcd81b2430c92bc5726135e7c02383d562
+| Author: Jesus Palencia <sinfallas@gmail.com>
+| Date:   Mon Jun 29 19:25:39 2026 -0400
+| 
+|     * changelog
+| 
+* commit 29e04e28794f32b998cba325df0c6cf3790ac6d4
+| Author: Jesus Palencia <sinfallas@gmail.com>
+| Date:   Mon Jun 29 19:25:25 2026 -0400
+| 
+|     * bugfix ip zabbix-agent
+| 
+* commit 2961c6a44da093e838100bf9b69c4e5192120a8f
+| Author: Jesus Palencia <sinfallas@gmail.com>
+| Date:   Wed Jun 17 18:51:47 2026 -0400
+| 
+|     * changelog
+| 
+* commit f0526df054371ccf9f03313cbdd45b3e9e748456
 | Author: Jesus Palencia <sinfallas@gmail.com>
 | Date:   Wed Jun 17 18:51:40 2026 -0400
 | 
