@@ -17,3 +17,6 @@ Nueva accion:
     * send to media type: n8n
     * custom message: off
     * conditions; nada
+
+NOTA:
+* Asegurese de activar la nueva accion.
