@@ -71,13 +71,23 @@ catch (error) {
 * message: 
 
 event_id: {EVENT.ID}
+
 event_name: {EVENT.NAME}
+
 event_severity: {EVENT.SEVERITY}
+
 host_name: {HOST.NAME}
+
 host_ip: {HOST.IP}
+
 item_name: {ITEM.NAME}
+
 item_last_value: {ITEM.LASTVALUE}
+
 event_status: {EVENT.STATUS}
+
+NOTA:
+* Asegurese de activar la nueva Media Type.
 
 
 
