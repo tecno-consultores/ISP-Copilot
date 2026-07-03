@@ -1,0 +1,115 @@
+{
+  "name": "leer_graylog_n8n",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "ip"
+            },
+            {
+              "name": "puerto"
+            },
+            {
+              "name": "input"
+            },
+            {
+              "name": "usuario"
+            },
+            {
+              "name": "password"
+            },
+            {
+              "name": "cantidad",
+              "type": "number"
+            },
+            {
+              "name": "tiempo",
+              "type": "number"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "d1a9de85-40f7-4ee2-aab9-73a4642be2fb",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "url": "=http://{{ $json.ip }}:{{ $json.puerto }}/api/search/universal/relative",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "query",
+              "value": "=gl2_source_input:{{ $json.input }}"
+            },
+            {
+              "name": "range",
+              "value": "={{ $json.tiempo }}"
+            },
+            {
+              "name": "limit",
+              "value": "={{ $json.cantidad }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "={{ 'Basic ' + ($json.usuario + ':' + $json.password).base64Encode() }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "f769707b-5600-458e-9c67-9db90f9ef8d8",
+      "name": "peticion_graylog"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "peticion_graylog",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "84b7f89f-abcb-430d-afb5-bf67ff3a77b5",
+  "meta": {
+    "instanceId": "5d7cd8c0612c3c9f6b1aaad343a794c642582938ff7ecf165a06281225de139b"
+  },
+  "nodeGroups": [],
+  "id": "oFupAqJkXUsAL8hj",
+  "tags": []
+}
