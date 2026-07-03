@@ -1,0 +1,20 @@
+# Evolution API
+
+* esta es una lista de pasos para configurar una instancia:
+
+instancia:
+- Nombre
+- Baileys
+
+Configurations:
+- reject calls
+- ignore groups
+- always online
+- read messages
+
+Events/webhook:
+- enable
+- webhook base64 (images)
+- message upsert
+
+NOTA: en el siguiente video doy una explicacion detallada: https://youtu.be/X_B0INNSmj0
