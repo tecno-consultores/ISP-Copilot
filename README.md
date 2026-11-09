@@ -85,5 +85,4 @@ El repositorio está dividido en módulos independientes:
 ## 📄 Licencia
 
 Este proyecto está bajo la Licencia MIT - mira el archivo [LICENSE](LICENSE) para detalles.
-
-[![Star History Chart](https://api.star-history.com/svg?repos=tecno-consultores/ISP-Copilot&type=Date)](https://www.star-history.com/#tecno-consultores/ISP-Copilot&Date)
+Copyright (C) 2026 Jesus Palencia <sinfallas@gmail.com> (Creado en Tecno Consultores)
